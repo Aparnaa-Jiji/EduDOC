@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>EduDOC | Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Inter',sans-serif;
+}
+
+body{
+    background: linear-gradient(-45deg,#eef2ff,#e0e7ff,#f8fafc,#f1f5f9);
+    background-size:400% 400%;
+    animation:gradientShift 18s ease infinite;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    color:#1e293b;
+    overflow:hidden;
+}
+
+@keyframes gradientShift{
+    0%{background-position:0% 50%;}
+    50%{background-position:100% 50%;}
+    100%{background-position:0% 50%;}
+}
+
+/* ================= FLOATING SHAPES ================= */
+
+.shape{
+    position:absolute;
+    border-radius:50%;
+    filter:blur(120px);
+    opacity:0.4;
+    z-index:-1;
+}
+
+.shape1{
+    width:350px;
+    height:350px;
+    background:#6366f1;
+    top:-100px;
+    left:-100px;
+}
+
+.shape2{
+    width:300px;
+    height:300px;
+    background:#a5b4fc;
+    bottom:-120px;
+    right:-100px;
+}
+
+/* ================= CARD ================= */
+
+.login-card{
+    width:420px;
+    padding:45px;
+    background:rgba(255,255,255,0.7);
+    backdrop-filter:blur(20px);
+    border-radius:24px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.12);
+    border:1px solid rgba(255,255,255,0.5);
+    animation:fadeUp 0.9s ease;
+}
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(40px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+.login-card h2{
+    text-align:center;
+    margin-bottom:30px;
+    font-weight:600;
+}
+
+.input-group{
+    margin-bottom:20px;
+}
+
+.input-group input{
+    width:100%;
+    padding:14px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    font-size:14px;
+    transition:all 0.2s ease;
+}
+
+.input-group input:focus{
+    outline:none;
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,0.2);
+}
+
+.btn-login{
+    width:100%;
+    padding:14px;
+    border-radius:14px;
+    border:none;
+    font-size:15px;
+    font-weight:500;
+    cursor:pointer;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    transition:all 0.3s ease;
+}
+
+.btn-login:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 35px rgba(79,70,229,0.4);
+}
+
+/* ================= LINKS ================= */
+
+.links{
+    margin-top:18px;
+    text-align:center;
+    font-size:13px;
+}
+
+.links a{
+    text-decoration:none;
+    color:#4f46e5;
+    font-weight:500;
+}
+
+.links a:hover{
+    text-decoration:underline;
+}
+
+.error-message{
+    background:#fee2e2;
+    color:#b91c1c;
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:18px;
+    font-size:13px;
+    text-align:center;
+}
+
+.back-home{
+    position:absolute;
+    top:30px;
+    left:30px;
+    text-decoration:none;
+    font-size:14px;
+    color:#4f46e5;
+    font-weight:500;
+}
+
+.back-home:hover{
+    text-decoration:underline;
+}
+/* ================= MODAL ================= */
+
+.modal-overlay{
+    position:fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(15,23,42,0.6);
+    backdrop-filter:blur(6px);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    opacity:0;
+    visibility:hidden;
+    transition:all 0.3s ease;
+}
+
+.modal-overlay.active{
+    opacity:1;
+    visibility:visible;
+}
+
+.modal-card{
+    width:400px;
+    padding:35px;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(20px);
+    border-radius:20px;
+    box-shadow:0 25px 60px rgba(0,0,0,0.25);
+    animation:fadeUp 0.4s ease;
+}
+
+.modal-card h3{
+    margin-bottom:20px;
+    text-align:center;
+}
+
+.modal-card input{
+    width:100%;
+    padding:12px;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+    margin-bottom:18px;
+}
+
+.modal-card button{
+    width:100%;
+    padding:12px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    font-weight:500;
+    cursor:pointer;
+    transition:all 0.3s ease;
+}
+
+.modal-card button:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 30px rgba(79,70,229,0.4);
+}
+
+.modal-close{
+    margin-top:15px;
+    text-align:center;
+    font-size:13px;
+    color:#4f46e5;
+    cursor:pointer;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="shape shape1"></div>
+<div class="shape shape2"></div>
+
+<a href="{% url 'accounts:home' %}" class="back-home">← Back to Home</a>
+
+<div class="login-card">
+
+    <h2>EduDOC Login</h2>
+
+    {% if error %}
+        <div class="error-message">
+            {{ error }}
+        </div>
+    {% endif %}
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Username" required>
+        </div>
+
+        <div class="input-group">
+            <input type="password" name="password" placeholder="Password" required>
+        </div>
+
+        <button type="submit" class="btn-login">
+            Login
+        </button>
+    </form>
+
+    <div class="links">
+        <div style="margin-top:10px;">
+            <a href="#" onclick="openModal(event)">Forgot Password?</a>
+
+        </div>
+        <div style="margin-top:6px;">
+            New Teacher? 
+            <a href="{% url 'accounts:teacher-register' %}">
+                Register here
+            </a>
+        </div>
+    </div>
+
+</div>
+<!-- ================= PASSWORD RESET MODAL ================= -->
+
+<div id="resetModal" class="modal-overlay">
+    <div class="modal-card">
+        <h3>Reset Password</h3>
+
+        <form method="POST" action="{% url 'accounts:password_reset' %}">
+            {% csrf_token %}
+            <input type="email" name="email" placeholder="Enter your registered email" required>
+
+            <button type="submit">Send Reset Link</button>
+        </form>
+
+        <div class="modal-close" onclick="closeModal()">Cancel</div>
+    </div>
+</div>
+<script>
+function openModal(e){
+    e.preventDefault();
+    document.getElementById("resetModal").classList.add("active");
+}
+
+function closeModal(){
+    document.getElementById("resetModal").classList.remove("active");
+}
+</script>
+
+</body>
+</html>

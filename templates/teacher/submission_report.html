@@ -1,0 +1,320 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Evaluation | EduDOC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 20% 30%, #5b21b6 0%, transparent 45%),
+        radial-gradient(circle at 80% 75%, #6366f1 0%, transparent 45%),
+        linear-gradient(145deg,#eef2ff,#f1f5ff);
+}
+
+/* ===== TOPBAR (Same as Dashboard) ===== */
+
+.topbar{
+    padding:24px 70px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.brand{
+    font-weight:700;
+    font-size:22px;
+}
+
+.nav-links{
+    display:flex;
+    gap:28px;
+    align-items:center;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#444;
+    font-weight:500;
+}
+
+.logout-link{
+    text-decoration:none;
+    color:#dc2626;
+    font-weight:500;
+}
+
+/* ===== MAIN CONTAINER ===== */
+
+.container{
+    padding:60px 80px 100px;
+}
+
+/* ===== HERO ===== */
+
+.hero{
+    margin-bottom:50px;
+}
+
+.hero h1{
+    font-size:40px;
+    margin-bottom:10px;
+}
+
+.hero p{
+    opacity:.6;
+}
+
+/* ===== KPI STYLE (Reused) ===== */
+
+.kpi-row{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:30px;
+    margin-bottom:60px;
+}
+
+.kpi-card{
+    padding:30px;
+    border-radius:32px;
+    background:rgba(255,255,255,0.65);
+    backdrop-filter:blur(30px);
+    box-shadow:0 40px 80px rgba(79,70,229,0.08);
+    position:relative;
+}
+
+.kpi-card small{
+    opacity:.6;
+}
+
+.kpi-card h2{
+    font-size:30px;
+    margin-top:12px;
+}
+
+/* ===== PANEL (Reused Style) ===== */
+
+.panel{
+    padding:36px;
+    border-radius:32px;
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(35px);
+    box-shadow:0 40px 90px rgba(0,0,0,0.05);
+    margin-bottom:40px;
+}
+
+.panel h3{
+    margin-bottom:25px;
+}
+
+/* ===== TABLE ===== */
+
+table{
+    width:100%;
+    border-collapse:collapse;
+}
+
+th{
+    text-align:left;
+    font-size:13px;
+    opacity:.6;
+    padding-bottom:10px;
+}
+
+td{
+    padding:14px 0;
+    border-bottom:1px solid rgba(0,0,0,0.05);
+    font-size:14px;
+}
+
+.pass{ color:#16a34a; font-weight:600; }
+.fail{ color:#dc2626; font-weight:600; }
+.info{ color:#d97706; font-weight:600; }
+
+/* ===== ACTIONS ===== */
+
+.actions{
+    display:flex;
+    gap:20px;
+    align-items:center;
+}
+
+.btn{
+    padding:10px 22px;
+    border-radius:28px;
+    text-decoration:none;
+    font-weight:500;
+    font-size:14px;
+    transition:.25s ease;
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    box-shadow:0 25px 50px rgba(79,70,229,0.35);
+}
+
+.btn-primary:hover{
+    transform:translateY(-3px);
+}
+
+.btn-light{
+    background:white;
+    color:#4f46e5;
+    border:1px solid rgba(79,70,229,0.25);
+}
+.back-btn{
+    padding:12px 26px;
+    border-radius:40px;
+    text-decoration:none;
+    font-weight:600;
+    font-size:14px;
+    color:#4f46e5;
+    background:rgba(255,255,255,0.7);
+    backdrop-filter:blur(20px);
+    border:1px solid rgba(79,70,229,0.25);
+    transition:.25s ease;
+}
+
+.back-btn:hover{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    transform:translateY(-3px);
+    box-shadow:0 20px 40px rgba(79,70,229,0.25);
+}
+</style>
+</head>
+
+<body>
+
+
+
+<div class="container">
+
+    <!-- HERO -->
+    <div class="hero" style="display:flex; justify-content:space-between; align-items:center;">
+
+    <div>
+        <h1>Submission Evaluation</h1>
+        <p>
+            {{ classroom.name }} • {{ student.user.username }} • Attempt #{{ submission.attempt_no }}
+        </p>
+    </div>
+
+    <a href="{% url 'teacher:classroom_detail' classroom.id %}"
+       class="back-btn">
+        ← Back to Workspace
+    </a>
+
+</div>
+
+    <!-- KPI -->
+    <div class="kpi-row">
+
+        <div class="kpi-card">
+            <small>Compliance</small>
+            <h2>{{ submission.compliance_percent }}%</h2>
+        </div>
+
+        <div class="kpi-card">
+            <small>Plagiarism</small>
+            <h2>{{ submission.plagiarism_percent }}%</h2>
+        </div>
+
+        <div class="kpi-card">
+            <small>Final Score</small>
+            <h2>{{ submission.final_score }}%</h2>
+        </div>
+
+        <div class="kpi-card">
+            <small>Status</small>
+            <h2>{{ submission.status }}</h2>
+        </div>
+
+    </div>
+
+    <!-- RULE SUMMARY -->
+    <div class="panel">
+        <h3>Rule Compliance Overview</h3>
+
+        {% if breakdown.compliance %}
+        <table>
+            <tr>
+                <th>Rule</th>
+                <th>Result</th>
+                <th>Indicator</th>
+            </tr>
+
+            {% for rule in breakdown.compliance %}
+            <tr>
+                <td>{{ rule.rule }}</td>
+                <td>
+                    {% if rule.status == "PASS" %}
+                        <span class="pass">PASS</span>
+                    {% elif rule.status == "FAIL" %}
+                        <span class="fail">FAIL</span>
+                    {% else %}
+                        <span class="info">INFO</span>
+                    {% endif %}
+                </td>
+                <td>{{ rule.message }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        {% else %}
+            <p>No structured evaluation data available.</p>
+        {% endif %}
+    </div>
+
+    <!-- DOCUMENT ACCESS -->
+    <div class="panel">
+        <h3>Document Access</h3>
+
+        <div class="actions">
+
+            {% if submission.file %}
+            <a href="{{ submission.file.url }}" class="btn btn-light" download>
+                Download Original
+            </a>
+            {% endif %}
+
+            {% if submission.annotated_file %}
+            <a href="{{ submission.annotated_file.url }}" class="btn btn-primary" download>
+                Download Annotated Version
+            </a>
+            {% endif %}
+
+        </div>
+
+        <div style="margin-top:25px; font-size:13px; opacity:.65; line-height:1.8;">
+    
+    <strong>Upload Date:</strong>
+    {{ submission.submitted_at|date:"d M Y" }} <br>
+
+    <strong>Upload Time:</strong>
+    {{ submission.submitted_at|time:"h:i A" }} <br>
+
+    <strong>Evaluation Generated:</strong>
+    {{ submission.submitted_at|date:"d M Y, h:i A" }} <br>
+
+    <strong>Rule Version:</strong>
+    v{{ classroom.rules_version }} <br>
+
+    <strong>Evaluation ID:</strong>
+    {{ submission.id }}
+
+</div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

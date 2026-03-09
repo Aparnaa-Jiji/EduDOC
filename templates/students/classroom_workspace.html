@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Workspace | EduDOC</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+
+/* ================= GLOBAL ================= */
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+min-height:100vh;
+
+background:
+radial-gradient(circle at 15% 20%, #93c5fd55, transparent 45%),
+radial-gradient(circle at 85% 15%, #c4b5fd55, transparent 45%),
+radial-gradient(circle at 70% 85%, #86efac55, transparent 45%),
+linear-gradient(135deg,#f8fbff,#f1f5ff,#faf7ff);
+}
+
+.glass{
+background:rgba(255,255,255,.82);
+backdrop-filter:blur(18px);
+border-radius:26px;
+border:1px solid rgba(255,255,255,.8);
+box-shadow:0 12px 30px rgba(0,0,0,.05);
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+position:fixed;
+left:25px;
+top:25px;
+bottom:25px;
+width:250px;
+padding:30px;
+display:flex;
+flex-direction:column;
+}
+
+.logo{font-size:20px;font-weight:600;margin-bottom:40px;}
+
+.sidebar a{
+text-decoration:none;
+color:#475569;
+padding:14px 16px;
+border-radius:16px;
+display:flex;
+gap:12px;
+margin-bottom:12px;
+}
+
+.sidebar a:hover{
+background:linear-gradient(135deg,#e0f2fe,#ede9fe);
+}
+
+.sidebar .active{
+background:linear-gradient(135deg,#93c5fd,#c4b5fd);
+color:white;
+}
+
+/* ================= MAIN ================= */
+
+.main{margin-left:310px;padding:45px;}
+
+.hero{
+padding:30px;
+margin-bottom:28px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:linear-gradient(135deg,#e0f2fe,#ede9fe);
+border-radius:26px;
+}
+
+/* ================= STATUS CARDS ================= */
+
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+margin-bottom:30px;
+}
+
+.stat{
+padding:22px;
+border-radius:22px;
+box-shadow:0 10px 25px rgba(0,0,0,.05);
+}
+
+.stat-label{font-size:12px;opacity:.7;text-transform:uppercase;}
+.stat-value{font-size:24px;font-weight:600;margin-top:6px;}
+
+.stat.attempts{background:linear-gradient(135deg,#e0f2fe,#dbeafe);}
+.stat.submissions{background:linear-gradient(135deg,#ecfdf5,#d1fae5);}
+.stat.status{background:linear-gradient(135deg,#fef9c3,#fde68a);}
+.stat.score{background:linear-gradient(135deg,#f3e8ff,#e9d5ff);}
+
+/* ================= ALERT ================= */
+
+.alert{
+padding:18px;
+border-radius:16px;
+margin-bottom:20px;
+font-weight:500;
+}
+
+.alert-warning{
+background:#fff7ed;
+color:#9a3412;
+}
+
+.alert-danger{
+background:#fff1f2;
+color:#9f1239;
+}
+
+.alert-info{
+background:#eef2ff;
+color:#3730a3;
+}
+.action-group{
+display:flex;
+justify-content:flex-end;
+gap:12px;
+flex-wrap:wrap;
+}
+
+.action-btn{
+display:flex;
+align-items:center;
+gap:8px;
+padding:8px 14px;
+border-radius:12px;
+background:#eef2ff;
+color:#4338ca;
+text-decoration:none;
+font-size:13px;
+font-weight:500;
+transition:.25s ease;
+}
+
+.action-btn i{
+font-size:14px;
+}
+
+.action-btn:hover{
+background:#6366f1;
+color:white;
+transform:translateY(-2px);
+}
+
+.action-btn.primary{
+background:linear-gradient(135deg,#93c5fd,#a78bfa);
+color:white;
+}
+/* ================= UPLOAD ================= */
+
+.upload-card{
+padding:30px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:25px;
+}
+
+.upload-dropzone{
+flex:1;
+border:2px dashed #9aa6ff;
+border-radius:18px;
+padding:35px 40px;
+background:rgba(255,255,255,0.35);
+text-align:center;
+cursor:pointer;
+transition:.3s;
+}
+
+.upload-dropzone:hover{
+transform:translateY(-2px);
+border-color:#6c7bff;
+}
+
+.btn-primary{
+padding:12px 22px;
+border:none;
+border-radius:12px;
+background:linear-gradient(135deg,#93c5fd,#a78bfa);
+color:white;
+cursor:pointer;
+font-weight:500;
+}
+
+/* ================= TABLE ================= */
+
+.submission-table{width:100%;border-collapse:collapse;}
+.submission-table th{
+padding:14px;
+font-size:12px;
+opacity:.7;
+text-align:left;
+}
+.submission-table td{
+padding:14px;
+border-top:1px solid rgba(0,0,0,.05);
+}
+
+.badge{
+padding:6px 14px;
+border-radius:999px;
+font-size:12px;
+}
+
+.green{background:#dcfce7;color:#166534;}
+.yellow{background:#fef9c3;color:#854d0e;}
+.red{background:#fee2e2;color:#7f1d1d;}
+
+.btn-mini{
+padding:7px 12px;
+border-radius:10px;
+background:#e0e7ff;
+color:#3730a3;
+text-decoration:none;
+font-size:12px;
+margin-right:6px;
+}
+/* ================= SUBMISSION CARDS ================= */
+
+.submission-container{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.submission-row{
+display:grid;
+grid-template-columns: 1.2fr 2fr 1fr 1fr;
+align-items:center;
+padding:22px 26px;
+border-radius:20px;
+background:white;
+border:1px solid #eef2f7;
+transition:.25s ease;
+}
+
+.submission-row:hover{
+transform:translateY(-3px);
+box-shadow:0 12px 30px rgba(0,0,0,.06);
+}
+
+/* LEFT */
+
+.submission-left{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.attempt-id{
+font-weight:600;
+font-size:15px;
+}
+
+.meta-date{
+font-size:13px;
+opacity:.7;
+}
+
+.meta-time{
+font-size:12px;
+opacity:.5;
+}
+
+/* METRICS */
+
+.submission-metrics{
+display:flex;
+gap:40px;
+}
+
+.metric-block{
+display:flex;
+flex-direction:column;
+}
+
+.metric-label{
+font-size:11px;
+text-transform:uppercase;
+letter-spacing:.5px;
+opacity:.6;
+margin-bottom:4px;
+}
+
+.metric-value{
+font-size:16px;
+font-weight:500;
+}
+
+.metric-value.strong{
+font-size:20px;
+font-weight:700;
+color:#111827;
+}
+
+.score-highlight{
+padding-left:15px;
+border-left:3px solid #6366f1;
+}
+
+/* STATUS */
+
+.status-pill{
+padding:6px 14px;
+border-radius:999px;
+font-size:12px;
+font-weight:500;
+}
+
+.success{
+background:#dcfce7;
+color:#166534;
+}
+
+.warning{
+background:#fef9c3;
+color:#854d0e;
+}
+
+.danger{
+background:#fee2e2;
+color:#7f1d1d;
+}
+
+/* ACTIONS */
+
+.submission-actions{
+display:flex;
+flex-direction:column;
+gap:8px;
+align-items:flex-end;
+}
+
+.action-link{
+font-size:13px;
+font-weight:500;
+color:#4f46e5;
+text-decoration:none;
+}
+
+.action-link:hover{
+text-decoration:underline;
+}
+
+.action-link.primary{
+color:#7c3aed;
+font-weight:600;
+}
+.selected-file{
+margin-top:12px;
+font-size:13px;
+color:#4f46e5;
+font-weight:500;
+word-break:break-all;
+}
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar glass">
+<div class="logo">EduDOC Student</div>
+
+<a href="{% url 'student:student_dashboard' %}">
+<i class="bi bi-grid"></i> Dashboard
+</a>
+
+<a href="{% url 'student:classroom_list' %}" class="active">
+<i class="bi bi-collection"></i> Classrooms
+</a>
+
+<a href="{% url 'accounts:logout' %}">
+<i class="bi bi-box-arrow-right"></i> Logout
+</a>
+</div>
+
+<div class="main">
+
+<!-- HERO -->
+<div class="hero glass">
+<div>
+<h2>{{ classroom.name }}</h2>
+<small>Deadline: {{ classroom.deadline|date:"M d, Y H:i" }}</small>
+</div>
+</div>
+
+<!-- STATUS CARDS -->
+<div class="stats-grid">
+
+<div class="stat attempts">
+<div class="stat-label">Attempts</div>
+<div class="stat-value">{{ attempts_used }}/{{ attempts_allowed }}</div>
+</div>
+
+<div class="stat submissions">
+<div class="stat-label">Submissions</div>
+<div class="stat-value">{{ submissions|length }}</div>
+</div>
+
+<div class="stat status">
+<div class="stat-label">Status</div>
+<div class="stat-value">
+{% if deadline_passed and not unlock_active %}
+Closed
+{% elif cooldown_active %}
+Cooldown
+{% else %}
+Active
+{% endif %}
+</div>
+</div>
+
+<div class="stat score">
+<div class="stat-label">Latest Score</div>
+<div class="stat-value">
+{% if latest_submission %}
+{{ latest_submission.final_score|default:"—" }}
+{% else %}—{% endif %}
+</div>
+</div>
+
+</div>
+<div class="glass" style="padding:30px;">
+
+{% if deadline_passed %}
+
+    {% if unlock_active %}
+
+        <!-- UNLOCK ACTIVE → ALLOW ONE UPLOAD -->
+        <div class="alert alert-info">
+            Unlock Approved — You may submit once.
+        </div>
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              action="{% url 'student:upload_submission' classroom.id %}">
+            {% csrf_token %}
+            <div class="upload-card">
+                <label class="upload-dropzone">
+                    <i class="bi bi-cloud-arrow-up" style="font-size:34px;"></i>
+                    <br><br>
+                    Click to Upload Report
+                    <input type="file" name="file" hidden required>
+                </label>
+                <button class="btn-primary">
+                    Submit Report
+                </button>
+            </div>
+        </form>
+
+    {% else %}
+
+        <!-- DEADLINE PASSED & NO UNLOCK -->
+        <div class="alert alert-danger">
+            <i class="bi bi-lock-fill"></i>
+            Deadline Passed — Submission Locked
+        </div>
+
+        <div class="glass" style="padding:25px;margin-top:15px;">
+            <h4 style="margin-bottom:12px;">Request Unlock</h4>
+
+            {% if unlock_request_pending %}
+                <div class="alert alert-info">
+                    Unlock request already sent. Waiting for teacher approval.
+                </div>
+            {% else %}
+                <form method="POST"
+                      action="{% url 'student:request_unlock' classroom.id %}">
+                    {% csrf_token %}
+                    <textarea name="reason"
+                              required
+                              placeholder="Enter reason for late submission..."
+                              style="width:100%;padding:12px;border-radius:12px;
+                                     border:1px solid #e5e7eb;margin-bottom:12px;
+                                     resize:none;height:90px;"></textarea>
+                    <button class="btn-primary">
+                        Request Unlock
+                    </button>
+                </form>
+            {% endif %}
+        </div>
+
+    {% endif %}
+
+{% else %}
+
+    <!-- BEFORE DEADLINE -->
+
+    {% if not can_submit %}
+
+        <div class="alert alert-warning">
+            {{ submission_locked_reason }}
+        </div>
+
+        {% if cooldown_active %}
+        <div class="alert alert-info">
+            Attempt cooldown active —
+            <span id="countdown"
+                  data-seconds="{{ cooldown_remaining_seconds }}">
+                Loading...
+            </span>
+        </div>
+        {% endif %}
+
+    {% else %}
+
+        <form method="POST"
+              enctype="multipart/form-data"
+              action="{% url 'student:upload_submission' classroom.id %}">
+            {% csrf_token %}
+            <div class="upload-card">
+                <label class="upload-dropzone">
+    <i class="bi bi-cloud-arrow-up" style="font-size:34px;"></i>
+    <br><br>
+    Click to Upload Report
+
+    <div class="selected-file" id="selectedFile">
+        No file selected
+    </div>
+
+    <input type="file" name="file" id="fileInput" hidden required>
+</label>
+                <button class="btn-primary">
+                    Submit Report
+                </button>
+            </div>
+        </form>
+
+    {% endif %}
+
+{% endif %}
+
+</div>
+
+<!-- HISTORY -->
+
+<div class="glass" style="padding:30px;margin-top:25px;">
+<h3 style="margin-bottom:24px;font-weight:600;">Submission History</h3>
+
+{% if submissions %}
+
+<div class="submission-container">
+
+{% for s in submissions %}
+
+<div class="submission-row">
+
+    <!-- LEFT SECTION -->
+    <div class="submission-left">
+
+        <div class="attempt-id">
+            Attempt #{{ s.attempt_no }}
+        </div>
+
+        <div class="submission-meta">
+            <div class="meta-date">
+                {{ s.submitted_at|date:"M d, Y" }}
+            </div>
+            <div class="meta-time">
+                {{ s.submitted_at|date:"H:i" }}
+            </div>
+        </div>
+
+    </div>
+
+    <!-- CENTER METRICS -->
+    <div class="submission-metrics">
+
+        <div class="metric-block">
+            <div class="metric-label">Compliance</div>
+            <div class="metric-value">
+                {{ s.compliance_percent|default:"—" }}%
+            </div>
+        </div>
+
+        <div class="metric-block">
+            <div class="metric-label">Plagiarism</div>
+            <div class="metric-value">
+                {{ s.plagiarism_percent|default:"—" }}%
+            </div>
+        </div>
+
+        <div class="metric-block score-highlight">
+            <div class="metric-label">Score</div>
+            <div class="metric-value strong">
+                {{ s.final_score|default:"—" }}%
+            </div>
+        </div>
+
+    </div>
+
+    <!-- STATUS -->
+    <div class="submission-status">
+        {% if s.status == "EVALUATED" %}
+            <span class="status-pill success">Evaluated</span>
+        {% elif s.status == "PROCESSING" %}
+            <span class="status-pill warning">Processing</span>
+        {% else %}
+            <span class="status-pill danger">{{ s.status }}</span>
+        {% endif %}
+    </div>
+
+    <!-- ACTIONS -->
+    <div class="submission-actions">
+
+        <a href="{{ s.file.url }}" class="action-link">
+            Download
+        </a>
+
+        {% if s.annotated_file %}
+        <a href="{{ s.annotated_file.url }}" class="action-link">
+            Annotated
+        </a>
+        {% endif %}
+
+        {% if s.status == "EVALUATED" %}
+        <a href="{% url 'student:report_detail' s.id %}" class="action-link primary">
+            View Report
+        </a>
+        {% endif %}
+
+    </div>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+<p>No submissions yet.</p>
+{% endif %}
+
+
+
+</div>
+
+</div>
+
+<!-- SINGLE CLEAN COUNTDOWN SCRIPT -->
+
+<script>
+
+const countdownEl = document.getElementById("countdown");
+
+if (countdownEl) {
+
+let seconds = parseInt(countdownEl.dataset.seconds);
+
+function updateCountdown() {
+
+if (seconds <= 0) {
+location.reload();
+return;
+}
+
+const h = Math.floor(seconds / 3600);
+const m = Math.floor((seconds % 3600) / 60);
+const s = seconds % 60;
+
+countdownEl.innerText =
+`${h.toString().padStart(2,"0")}:` +
+`${m.toString().padStart(2,"0")}:` +
+`${s.toString().padStart(2,"0")}`;
+
+seconds--;
+}
+
+updateCountdown();
+setInterval(updateCountdown, 1000);
+}
+
+</script>
+<script>
+
+const fileInput = document.getElementById("fileInput");
+const selectedFile = document.getElementById("selectedFile");
+
+if(fileInput){
+
+fileInput.addEventListener("change", function(){
+
+    if(fileInput.files.length > 0){
+
+        const file = fileInput.files[0];
+
+        selectedFile.innerText = "Selected: " + file.name;
+
+    }else{
+
+        selectedFile.innerText = "No file selected";
+
+    }
+
+});
+
+}
+
+</script>
+</body>
+</html>

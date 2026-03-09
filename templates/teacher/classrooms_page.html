@@ -1,0 +1,443 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>Classrooms | EduDOC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 20% 20%, #4f46e5 0%, transparent 40%),
+        radial-gradient(circle at 80% 80%, #7c3aed 0%, transparent 40%),
+        linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* ================= TOP NAV ================= */
+
+.topbar{
+    padding:22px 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(20px);
+    box-shadow:0 10px 30px rgba(0,0,0,0.05);
+}
+
+.brand{
+    font-weight:700;
+    font-size:20px;
+}
+
+.nav-links{
+    display:flex;
+    gap:28px;
+    align-items:center;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#444;
+    font-weight:500;
+}
+
+.nav-links a.active{
+    padding:6px 16px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+}
+
+.profile-actions{
+    display:flex;
+    gap:18px;
+    align-items:center;
+}
+
+.profile-btn{
+    padding:7px 18px;
+    border-radius:22px;
+    font-size:14px;
+    text-decoration:none;
+    color:#4f46e5;
+    background:rgba(255,255,255,0.7);
+    border:1px solid rgba(79,70,229,0.25);
+    transition:.25s ease;
+}
+
+.profile-btn:hover{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+}
+
+.logout-link{
+    text-decoration:none;
+    color:#dc2626;
+    font-weight:500;
+}
+
+/* ================= CONTAINER ================= */
+
+.container{ padding:60px; }
+
+.header-row{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+}
+
+.header-row h2{
+    font-size:30px;
+}
+
+.create-btn{
+    padding:10px 22px;
+    border-radius:24px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    text-decoration:none;
+    font-weight:500;
+    box-shadow:0 15px 35px rgba(79,70,229,0.35);
+    transition:.25s ease;
+}
+
+.create-btn:hover{
+    transform:translateY(-3px);
+}
+
+/* ================= SUMMARY ================= */
+
+.summary{
+    display:flex;
+    gap:40px;
+    margin-bottom:30px;
+    font-size:14px;
+    opacity:.75;
+}
+
+/* ================= FILTER BAR ================= */
+
+.filter-bar{
+    display:flex;
+    flex-wrap:wrap;
+    gap:14px;
+    margin-bottom:35px;
+}
+
+.filter-bar input,
+.filter-bar select{
+    padding:10px 14px;
+    border-radius:16px;
+    border:none;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(15px);
+    box-shadow:0 10px 25px rgba(0,0,0,0.04);
+}
+
+.filter-bar button{
+    padding:10px 20px;
+    border-radius:20px;
+    border:none;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    cursor:pointer;
+}
+
+/* ================= CARDS ================= */
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+    gap:25px;
+}
+
+.card{
+    padding:24px;
+    border-radius:26px;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(25px);
+    box-shadow:0 25px 60px rgba(0,0,0,0.08);
+    transition:.25s ease;
+}
+
+.card:hover{
+    transform:translateY(-5px);
+}
+
+.card h4{
+    margin-bottom:12px;
+}
+
+.badge{
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:500;
+}
+
+.active-badge{
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.completed-badge{
+    background:#e5e7eb;
+    color:#374151;
+}
+
+.card small{
+    display:block;
+    margin-top:10px;
+    opacity:.7;
+}
+
+/* ================= ACTIONS ================= */
+
+.actions{
+    margin-top:18px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+}
+
+.btn{
+    padding:7px 16px;
+    border-radius:18px;
+    text-decoration:none;
+    font-size:13px;
+    font-weight:500;
+    border:none;
+    cursor:pointer;
+}
+
+.btn-primary{
+    background:#4f46e5;
+    color:white;
+}
+
+.btn-danger{
+    background:#dc2626;
+    color:white;
+}
+
+.empty{
+    text-align:center;
+    padding:60px;
+    background:rgba(255,255,255,0.7);
+    border-radius:28px;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ================= NAV ================= -->
+
+<div class="topbar">
+    <div class="brand">EduDOC • Faculty Studio</div>
+
+    <div class="nav-links">
+        <a href="{% url 'teacher:teacher_dashboard' %}">Dashboard</a>
+        <a href="{% url 'teacher:classrooms_page' %}" class="active">Classrooms</a>
+    </div>
+
+    <div class="profile-actions">
+        <a href="{% url 'accounts:teacher_profile' %}" class="profile-btn">Profile</a>
+        <a href="{% url 'accounts:logout' %}" class="logout-link">Logout</a>
+    </div>
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+<div class="header-row">
+    <h2>Classrooms</h2>
+    <a href="{% url 'teacher:create_classroom' %}" class="create-btn">
+        + Create Classroom
+    </a>
+</div>
+
+<div class="summary">
+    <div>Total: <strong>{{ total_count }}</strong></div>
+    <div>Active: <strong>{{ active_count }}</strong></div>
+    <div>Completed: <strong>{{ completed_count }}</strong></div>
+</div>
+
+<form method="get" class="filter-bar">
+    <input type="text" name="search" placeholder="Search classroom..." value="{{ search }}">
+    <select name="status">
+        <option value="">All</option>
+        <option value="active" {% if status == "active" %}selected{% endif %}>Active</option>
+        <option value="completed" {% if status == "completed" %}selected{% endif %}>Completed</option>
+    </select>
+    <select name="sort">
+        <option value="">Sort</option>
+        <option value="deadline">Deadline ↑</option>
+        <option value="deadline_desc">Deadline ↓</option>
+    </select>
+    <button>Apply</button>
+</form>
+
+{% if classrooms %}
+<div class="grid">
+{% for c in classrooms %}
+    <div class="card">
+
+        <h4>{{ c.name }}</h4>
+
+        {% if c.deadline >= now %}
+    <span class="badge active-badge">Active</span>
+{% else %}
+    <span class="badge completed-badge">Completed</span>
+{% endif %}
+
+
+        <small>Deadline: {{ c.deadline }}</small>
+        <small>Passkey: {{ c.passkey }}</small>
+
+        <div class="actions">
+            <a href="{% url 'teacher:classroom_detail' c.id %}" class="btn btn-primary">Open</a>
+            <form method="post"
+      action="{% url 'teacher:delete_classroom' c.id %}"
+      style="display:inline;">
+<form method="post"
+      action="{% url 'teacher:delete_classroom' c.id %}"
+      class="delete-form"
+      style="display:inline;">
+    {% csrf_token %}
+    <button type="button"
+            class="btn btn-danger delete-trigger">
+        Delete
+    </button>
+</form>
+
+
+</form>
+
+        </div>
+
+    </div>
+{% endfor %}
+</div>
+{% else %}
+<div class="empty">
+    No classrooms created yet.
+</div>
+{% endif %}
+
+</div>
+{% if page_obj.has_other_pages %}
+<div style="margin-top:40px;text-align:center;">
+
+    {% if page_obj.has_previous %}
+        <a class="btn btn-primary"
+           href="?page={{ page_obj.previous_page_number }}&search={{ search }}&status={{ status }}&sort={{ sort }}">
+           ← Prev
+        </a>
+    {% endif %}
+
+    <span style="margin:0 14px;">
+        Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+    </span>
+
+    {% if page_obj.has_next %}
+        <a class="btn btn-primary"
+           href="?page={{ page_obj.next_page_number }}&search={{ search }}&status={{ status }}&sort={{ sort }}">
+           Next →
+        </a>
+    {% endif %}
+
+</div>
+{% endif %}
+
+<!-- ================= DELETE CONFIRMATION MODAL ================= -->
+
+<div id="deleteModal" style="
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,0.35);
+backdrop-filter:blur(6px);
+align-items:center;
+justify-content:center;
+z-index:999;
+">
+
+    <div style="
+        width:380px;
+        padding:30px;
+        border-radius:28px;
+        background:rgba(255,255,255,0.9);
+        backdrop-filter:blur(25px);
+        box-shadow:0 40px 90px rgba(0,0,0,0.15);
+        text-align:center;
+    ">
+
+        <h3 style="margin-bottom:12px;">Delete Classroom?</h3>
+
+        <p style="font-size:14px; opacity:.7; margin-bottom:25px;">
+            This action cannot be undone.
+        </p>
+
+        <div style="display:flex; justify-content:center; gap:14px;">
+
+            <button id="cancelDelete"
+                    class="btn"
+                    style="background:#e5e7eb; color:#111;">
+                Cancel
+            </button>
+
+            <button id="confirmDelete"
+                    class="btn btn-danger">
+                Delete
+            </button>
+
+        </div>
+
+    </div>
+</div>
+<script>
+let currentForm = null;
+
+const modal = document.getElementById("deleteModal");
+const confirmBtn = document.getElementById("confirmDelete");
+const cancelBtn = document.getElementById("cancelDelete");
+
+// Attach click event to all delete buttons
+document.querySelectorAll(".delete-trigger").forEach(btn => {
+    btn.addEventListener("click", function() {
+        currentForm = this.closest("form");
+        modal.style.display = "flex";
+    });
+});
+
+// Confirm delete
+confirmBtn.addEventListener("click", function() {
+    if(currentForm){
+        currentForm.submit();
+    }
+});
+
+// Cancel delete
+cancelBtn.addEventListener("click", function() {
+    modal.style.display = "none";
+});
+
+// ESC closes modal
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+        modal.style.display = "none";
+    }
+});
+</script>
+
+</body>
+</html>

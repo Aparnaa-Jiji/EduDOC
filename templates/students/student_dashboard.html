@@ -1,0 +1,456 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+<title>Student Dashboard | EduDOC</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+
+/* ===================================================
+GLOBAL STYLE
+=================================================== */
+
+*{
+box-sizing:border-box;
+font-family:'Inter',sans-serif;
+}
+
+body{
+margin:0;
+min-height:100vh;
+
+background:
+radial-gradient(circle at 10% 20%, #7dd3fc55, transparent 40%),
+radial-gradient(circle at 85% 10%, #c084fc55, transparent 40%),
+radial-gradient(circle at 80% 85%, #34d39955, transparent 45%),
+linear-gradient(135deg,#f8fbff,#eef4ff,#f9f6ff);
+}
+
+/* ===================================================
+GLASS SYSTEM
+=================================================== */
+
+.glass{
+background:rgba(255,255,255,0.78);
+backdrop-filter:blur(18px);
+border-radius:24px;
+border:1px solid rgba(255,255,255,0.8);
+
+box-shadow:
+0 12px 35px rgba(0,0,0,0.06),
+0 4px 12px rgba(80,120,255,0.05);
+
+transition:.3s ease;
+}
+
+.glass:hover{
+transform:translateY(-4px);
+}
+
+/* ===================================================
+SIDEBAR
+=================================================== */
+
+.sidebar{
+position:fixed;
+left:25px;
+top:25px;
+bottom:25px;
+width:260px;
+padding:32px;
+display:flex;
+flex-direction:column;
+
+background:linear-gradient(180deg,#ffffffcc,#f0f6ffcc);
+}
+
+.logo{
+font-weight:700;
+font-size:21px;
+margin-bottom:40px;
+color:#334155;
+}
+
+.sidebar a{
+text-decoration:none;
+color:#475569;
+padding:14px 16px;
+border-radius:16px;
+display:flex;
+gap:12px;
+margin-bottom:12px;
+transition:.25s;
+}
+
+.sidebar a:hover{
+background:linear-gradient(135deg,#e0f2fe,#ede9fe);
+}
+
+.active{
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+color:white;
+font-weight:500;
+}
+
+/* ===================================================
+MAIN
+=================================================== */
+
+.main{
+margin-left:320px;
+padding:42px;
+}
+
+/* ===================================================
+TOPBAR
+=================================================== */
+
+.topbar{
+padding:30px;
+margin-bottom:35px;
+
+display:flex;
+justify-content:space-between;
+align-items:center;
+
+background:linear-gradient(135deg,#60a5fa22,#a78bfa22);
+}
+
+.topbar h3{
+margin:0;
+font-weight:600;
+color:#1e293b;
+}
+
+.avatar{
+width:48px;
+height:48px;
+border-radius:50%;
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:white;
+font-weight:600;
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+}
+
+/* ===================================================
+MOTIVATION PANEL
+=================================================== */
+
+.motivation{
+display:flex;
+justify-content:space-between;
+align-items:center;
+padding:26px 30px;
+margin-bottom:35px;
+
+background:linear-gradient(135deg,#60a5fa22,#34d39922,#a78bfa22);
+}
+
+.motivation h4{
+margin:0 0 6px;
+}
+
+.progress-box{
+background:white;
+padding:12px 18px;
+border-radius:16px;
+font-weight:600;
+color:#4f46e5;
+}
+
+/* ===================================================
+SECTION
+=================================================== */
+
+.section-title{
+font-weight:600;
+margin:30px 0 18px;
+color:#334155;
+}
+
+/* ===================================================
+ACTION CARDS
+=================================================== */
+
+.action-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(230px,1fr));
+gap:24px;
+margin-bottom:40px;
+}
+
+.action-card{
+padding:26px;
+background:linear-gradient(135deg,#ffffff,#f8fbff);
+}
+
+.action-title{
+font-weight:600;
+margin-bottom:8px;
+}
+
+.btn{
+padding:10px 18px;
+border-radius:14px;
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+color:white;
+text-decoration:none;
+font-weight:500;
+display:inline-block;
+margin-top:12px;
+}
+
+/* ===================================================
+STATS
+=================================================== */
+
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:24px;
+margin-bottom:40px;
+}
+
+.stat-card{
+padding:28px;
+text-align:center;
+background:linear-gradient(135deg,#ffffff,#f8fbff);
+}
+
+.stat-number{
+font-size:30px;
+font-weight:700;
+margin-top:10px;
+color:#334155;
+}
+
+/* ===================================================
+TABLE
+=================================================== */
+
+.table{
+padding:28px;
+}
+
+.row{
+display:grid;
+grid-template-columns:2fr 1.5fr 1fr 1fr auto;
+gap:12px;
+padding:18px;
+border-radius:18px;
+margin-bottom:12px;
+
+background:linear-gradient(135deg,#ffffff,#f8fbff);
+}
+
+.row:hover{
+transform:translateY(-3px);
+box-shadow:0 15px 35px rgba(0,0,0,0.07);
+}
+
+/* ===================================================
+BADGES
+=================================================== */
+
+.badge{
+padding:6px 12px;
+border-radius:14px;
+font-size:12px;
+font-weight:500;
+}
+
+.green{
+background:#bbf7d0;
+color:#166534;
+}
+
+.yellow{
+background:#fde68a;
+color:#92400e;
+}
+
+.empty{
+text-align:center;
+padding:30px;
+opacity:.6;
+}
+
+/* ===================================================
+BACKGROUND ORBS
+=================================================== */
+
+.bg-orb{
+position:fixed;
+border-radius:50%;
+filter:blur(90px);
+opacity:.35;
+z-index:-1;
+}
+
+.orb1{
+width:420px;
+height:420px;
+background:#60a5fa;
+top:-120px;
+left:-120px;
+}
+
+.orb2{
+width:360px;
+height:360px;
+background:#a78bfa;
+bottom:-120px;
+right:-100px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar glass">
+
+<div class="logo">EduDOC Student</div>
+
+<a class="active"><i class="bi bi-grid"></i> Dashboard</a>
+
+<a href="{% url 'student:classroom_list' %}">
+<i class="bi bi-collection"></i> Classrooms
+</a>
+
+<a href="{% url 'accounts:logout' %}">
+<i class="bi bi-box-arrow-right"></i> Logout
+</a>
+
+</div>
+
+<div class="main">
+
+<div class="topbar glass">
+
+<div>
+<h3>Welcome back, {{ request.user.first_name|default:request.user.username }}</h3>
+<div style="opacity:.65;font-size:14px">
+Stay organized and keep your academic progress on track
+</div>
+</div>
+
+<div class="avatar">
+{{ request.user.username|first|upper }}
+</div>
+
+</div>
+
+
+<div class="glass motivation">
+
+<div>
+<h4>Today's Progress</h4>
+
+{% if pending_count > 0 %}
+<p>You still have <b>{{ pending_count }}</b> pending submission{{ pending_count|pluralize }}.</p>
+{% else %}
+<p>All submissions completed. Great progress!</p>
+{% endif %}
+
+</div>
+
+<div class="progress-box">
+{{ avg_score|default:"--" }}%
+</div>
+
+</div>
+
+
+<div class="section-title">Quick Actions</div>
+
+<div class="action-grid">
+
+<div class="glass action-card">
+<div class="action-title">Browse Classrooms</div>
+Access academic workspaces and assignments.
+<a class="btn" href="{% url 'student:classroom_list' %}">Open</a>
+</div>
+
+</div>
+
+
+<div class="section-title">Academic Overview</div>
+
+<div class="stats-grid">
+
+<div class="glass stat-card">
+Joined Classrooms
+<div class="stat-number">{{ total_joined }}</div>
+</div>
+
+<div class="glass stat-card">
+Pending Submissions
+<div class="stat-number">{{ pending_count }}</div>
+</div>
+
+<div class="glass stat-card">
+Evaluated Reports
+<div class="stat-number">{{ evaluated_count }}</div>
+</div>
+
+</div>
+
+
+<div class="section-title">Upcoming Deadlines</div>
+
+<div class="glass table">
+
+{% for r in urgent_rows %}
+
+<div class="row glass">
+
+<div>
+<b>{{ r.classroom.name }}</b>
+</div>
+
+<div>
+{{ r.deadline|date:"d M Y H:i" }}
+</div>
+
+<div>
+{% if r.latest_submission %}
+<span class="badge green">{{ r.latest_submission.status }}</span>
+{% else %}
+<span class="badge yellow">Not Submitted</span>
+{% endif %}
+</div>
+
+<div>
+{{ r.latest_submission.final_score|default:"--" }}
+</div>
+
+<a class="btn" href="{% url 'student:classroom_workspace' r.classroom.id %}">
+Open
+</a>
+
+</div>
+
+{% empty %}
+
+<div class="empty">
+No upcoming deadlines.
+</div>
+
+{% endfor %}
+
+</div>
+
+</div>
+
+<div class="bg-orb orb1"></div>
+<div class="bg-orb orb2"></div>
+
+</body>
+</html>

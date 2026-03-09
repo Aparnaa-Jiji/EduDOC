@@ -1,0 +1,178 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Classroom | EduDOC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:
+        radial-gradient(circle at 20% 20%, #4f46e5 0%, transparent 45%),
+        radial-gradient(circle at 80% 80%, #7c3aed 0%, transparent 45%),
+        linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* ================= CARD ================= */
+
+.card{
+    width:520px;
+    padding:45px;
+    border-radius:32px;
+    background:rgba(255,255,255,0.9);
+    backdrop-filter:blur(30px);
+    box-shadow:0 50px 100px rgba(0,0,0,0.08);
+}
+
+.card h2{
+    font-size:28px;
+    margin-bottom:10px;
+}
+
+.subtitle{
+    font-size:14px;
+    opacity:.65;
+    margin-bottom:30px;
+}
+
+/* ================= FORM ================= */
+
+label{
+    font-size:13px;
+    font-weight:500;
+    margin-bottom:6px;
+    display:block;
+}
+
+input, select{
+    width:100%;
+    padding:12px 16px;
+    border-radius:18px;
+    border:none;
+    background:rgba(255,255,255,0.85);
+    box-shadow:0 12px 30px rgba(0,0,0,0.05);
+    margin-bottom:18px;
+    font-size:14px;
+}
+
+input:focus, select:focus{
+    outline:none;
+    box-shadow:0 0 0 2px #7c3aed;
+}
+
+/* ================= BUTTON ================= */
+
+button{
+    width:100%;
+    padding:14px;
+    border-radius:28px;
+    border:none;
+    font-weight:600;
+    cursor:pointer;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    box-shadow:0 25px 50px rgba(79,70,229,0.35);
+    transition:.25s ease;
+}
+
+button:hover{
+    transform:translateY(-3px);
+}
+
+.back-link{
+    display:block;
+    text-align:center;
+    margin-top:18px;
+    font-size:13px;
+    text-decoration:none;
+    color:#4f46e5;
+}
+</style>
+</head>
+
+<body>
+
+<div class="card">
+
+    <h2>Create Classroom</h2>
+    <div class="subtitle">
+        Configure submission parameters for this academic activity.
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <!-- Classroom Name -->
+        <label>Classroom Name</label>
+        {{ form.name }}
+
+        <!-- Batch -->
+        <label>Batch</label>
+        {{ form.batch }}
+
+        <!-- Deadline -->
+        <label>Submission Deadline</label>
+        <input type="text"
+       id="deadlinePicker"
+       name="deadline"
+       required>
+
+
+        <!-- Max Marks -->
+        <label>Maximum Marks</label>
+        {{ form.max_marks }}
+
+        <button type="submit">
+            Create Classroom
+        </button>
+    </form>
+
+    <a href="{% url 'teacher:classrooms_page' %}" class="back-link">
+        ← Back to Classrooms
+    </a>
+
+</div>
+
+<!-- ================= DEADLINE VALIDATION ================= -->
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const deadlineInput = document.getElementById("id_deadline");
+
+    if(deadlineInput){
+
+        // Ensure datetime-local input
+        deadlineInput.type = "datetime-local";
+
+        // Get tomorrow (disable today and past)
+        const now = new Date();
+        now.setDate(now.getDate() + 1);
+        now.setHours(0,0,0,0);
+
+        const minDate = now.toISOString().slice(0,16);
+        deadlineInput.min = minDate;
+    }
+});
+flatpickr("#deadlinePicker", {
+    enableTime: true,
+    dateFormat: "Y-m-d h:i K",  // 12-hour with AM/PM
+    minDate: new Date().fp_incr(1), // Tomorrow onwards
+    time_24hr: false,
+});
+</script>
+
+</body>
+</html>

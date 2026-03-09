@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Classrooms | EduDOC</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+
+<style>
+
+/* ================= BACKGROUND ================= */
+
+body{
+margin:0;
+font-family:'Inter',sans-serif;
+min-height:100vh;
+
+background:
+radial-gradient(circle at 10% 20%, #60a5fa44, transparent 45%),
+radial-gradient(circle at 90% 15%, #a78bfa44, transparent 45%),
+radial-gradient(circle at 80% 85%, #34d39944, transparent 45%),
+linear-gradient(135deg,#f8fbff,#eef4ff,#f9f6ff);
+}
+
+/* ================= GLASS ================= */
+
+.glass{
+background:rgba(255,255,255,.7);
+backdrop-filter:blur(20px);
+border-radius:26px;
+border:1px solid rgba(255,255,255,.8);
+box-shadow:0 10px 30px rgba(0,0,0,.06);
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+position:fixed;
+left:25px;
+top:25px;
+bottom:25px;
+width:250px;
+padding:30px;
+display:flex;
+flex-direction:column;
+}
+
+.logo{
+font-size:20px;
+font-weight:600;
+margin-bottom:40px;
+}
+
+.sidebar a{
+text-decoration:none;
+color:#475569;
+padding:14px 16px;
+border-radius:16px;
+display:flex;
+gap:12px;
+margin-bottom:12px;
+}
+
+.sidebar a:hover{
+background:linear-gradient(135deg,#e0f2fe,#ede9fe);
+}
+
+.sidebar .active{
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+color:white;
+}
+
+/* ================= MAIN ================= */
+
+.main{
+margin-left:310px;
+padding:45px;
+}
+
+/* ================= HEADER ================= */
+
+.page-header{
+padding:32px;
+margin-bottom:35px;
+display:flex;
+justify-content:space-between;
+align-items:center;
+background:linear-gradient(135deg,#60a5fa22,#a78bfa22);
+border-radius:28px;
+}
+
+/* ================= TABS ================= */
+
+.tabs{
+display:flex;
+gap:12px;
+margin-bottom:30px;
+}
+
+.tab{
+padding:10px 18px;
+border-radius:14px;
+border:none;
+cursor:pointer;
+background:#e2e8f0;
+}
+
+.tab.active{
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+color:white;
+}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+/* ================= GRID ================= */
+
+.classroom-grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+gap:26px;
+}
+
+/* ================= CLASS CARD ================= */
+
+.class-card{
+position:relative;
+padding:24px;
+border-radius:26px;
+background:rgba(255,255,255,.78);
+backdrop-filter:blur(18px);
+box-shadow:0 12px 35px rgba(0,0,0,.06);
+transition:.35s;
+overflow:hidden;
+}
+
+.class-card:hover{
+transform:translateY(-8px);
+box-shadow:0 25px 60px rgba(0,0,0,.12);
+}
+
+/* glowing accent */
+.class-card::before{
+content:"";
+position:absolute;
+width:160px;
+height:160px;
+top:-60px;
+right:-60px;
+border-radius:50%;
+filter:blur(50px);
+opacity:.35;
+}
+
+.class-card:nth-child(4n+1)::before{background:#60a5fa;}
+.class-card:nth-child(4n+2)::before{background:#a78bfa;}
+.class-card:nth-child(4n+3)::before{background:#34d399;}
+.class-card:nth-child(4n+4)::before{background:#f59e0b;}
+
+/* ================= HEADER ================= */
+
+.card-header{
+display:flex;
+gap:14px;
+align-items:center;
+margin-bottom:12px;
+}
+
+.class-icon{
+width:42px;
+height:42px;
+border-radius:12px;
+display:flex;
+align-items:center;
+justify-content:center;
+color:white;
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+}
+
+/* ================= TEXT ================= */
+
+.class-title{
+font-weight:600;
+font-size:16px;
+}
+
+.teacher{
+font-size:13px;
+opacity:.7;
+}
+
+.card-meta{
+margin-top:10px;
+font-size:13px;
+opacity:.75;
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+/* ================= STATUS ================= */
+
+.badge{
+padding:6px 12px;
+border-radius:999px;
+font-size:11px;
+margin-top:10px;
+display:inline-block;
+}
+
+.badge-green{background:#dcfce7;color:#166534;}
+.badge-yellow{background:#fef3c7;color:#92400e;}
+.badge-red{background:#fee2e2;color:#7f1d1d;}
+
+.glow{
+animation:pulse 1.6s infinite;
+}
+
+@keyframes pulse{
+0%{box-shadow:0 0 0 rgba(251,191,36,0);}
+50%{box-shadow:0 0 14px rgba(251,191,36,.7);}
+100%{box-shadow:0 0 0 rgba(251,191,36,0);}
+}
+
+/* ================= BUTTONS ================= */
+
+.card-actions{
+margin-top:18px;
+display:flex;
+gap:10px;
+}
+
+.btn-primary{
+padding:10px 18px;
+border-radius:14px;
+border:none;
+cursor:pointer;
+color:white;
+background:linear-gradient(135deg,#60a5fa,#a78bfa);
+}
+
+.btn-secondary{
+padding:10px 18px;
+border-radius:14px;
+border:none;
+cursor:pointer;
+background:#ffe4e6;
+color:#be123c;
+}
+
+/* ================= MODAL ================= */
+
+.modal{
+display:none;
+position:fixed;
+inset:0;
+background:rgba(0,0,0,.3);
+backdrop-filter:blur(6px);
+justify-content:center;
+align-items:center;
+}
+
+.modal-box{
+width:380px;
+padding:28px;
+border-radius:24px;
+background:white;
+}
+
+.modal input{
+width:100%;
+padding:12px;
+margin:14px 0;
+border-radius:12px;
+border:1px solid #ddd;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- SIDEBAR -->
+<div class="sidebar glass">
+<div class="logo">EduDOC Student</div>
+
+<a href="{% url 'student:student_dashboard' %}">
+<i class="bi bi-grid"></i> Dashboard
+</a>
+
+<a class="active">
+<i class="bi bi-collection"></i> Classrooms
+</a>
+
+<a href="{% url 'accounts:logout' %}">
+<i class="bi bi-box-arrow-right"></i> Logout
+</a>
+</div>
+
+<div class="main">
+
+<!-- HEADER -->
+<div class="page-header glass">
+<div>
+<h2>My Classrooms</h2>
+<div style="opacity:.7">
+Manage courses and continue submissions
+</div>
+</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs">
+<button class="tab active" onclick="switchTab('joined',this)">Joined</button>
+<button class="tab" onclick="switchTab('active',this)">Active</button>
+<button class="tab" onclick="switchTab('available',this)">Available</button>
+</div>
+
+<!-- ================= JOINED ================= -->
+<div id="joined" class="tab-content active">
+
+<div class="classroom-grid">
+
+{% for m in memberships %}
+<div class="class-card">
+
+<div class="card-header">
+<div class="class-icon"><i class="bi bi-journal-bookmark"></i></div>
+
+<div>
+<div class="class-title">{{ m.classroom.name }}</div>
+<div class="teacher">
+<i class="bi bi-person"></i>
+{{ m.classroom.teacher.get_full_name }}
+</div>
+</div>
+</div>
+
+<div class="card-meta">
+<div><i class="bi bi-calendar"></i>
+Created: {{ m.classroom.created_at|date:"M d, Y" }}
+</div>
+
+<div><i class="bi bi-clock"></i>
+Deadline: {{ m.classroom.deadline|date:"M d, Y H:i" }}
+</div>
+</div>
+
+{% if m.classroom.deadline and m.classroom.deadline < now %}
+
+<span class="badge badge-red">
+Closed
+</span>
+
+{% elif m in urgent_classrooms %}
+
+<span class="badge badge-yellow glow">
+Due in &lt; 24h
+</span>
+
+{% else %}
+
+<span class="badge badge-green">
+Active
+</span>
+
+{% endif %}
+
+<div class="card-actions">
+<a href="{% url 'student:classroom_workspace' m.classroom.id %}" class="btn-primary">Open</a>
+<button class="btn-secondary" onclick="openUnjoinModal('{{ m.classroom.id }}')">Leave</button>
+</div>
+
+</div>
+{% endfor %}
+
+</div>
+</div>
+<!-- ================= ACTIVE ================= -->
+<!-- ================= ACTIVE ================= -->
+<div id="active" class="tab-content">
+
+<div class="classroom-grid">
+
+{% for m in active_memberships %}
+
+<div class="class-card">
+
+<div class="card-header">
+<div class="class-icon">
+<i class="bi bi-lightning-charge"></i>
+</div>
+
+<div>
+<div class="class-title">{{ m.classroom.name }}</div>
+
+<div class="teacher">
+<i class="bi bi-person"></i>
+{{ m.classroom.teacher.get_full_name }}
+</div>
+</div>
+</div>
+
+<div class="card-meta">
+
+<div>
+<i class="bi bi-calendar"></i>
+Created:
+{{ m.classroom.created_at|date:"M d, Y" }}
+</div>
+
+<div>
+<i class="bi bi-clock"></i>
+Deadline:
+{{ m.classroom.deadline|date:"M d, Y H:i" }}
+</div>
+
+</div>
+
+<span class="badge badge-green">Active</span>
+
+<div class="card-actions">
+<a href="{% url 'student:classroom_workspace' m.classroom.id %}"
+class="btn-primary">
+Open
+</a>
+</div>
+
+</div>
+
+{% empty %}
+<p class="empty">No active classrooms.</p>
+{% endfor %}
+
+</div>
+</div>
+<!-- ================= AVAILABLE ================= -->
+
+<div id="available" class="tab-content">
+
+<div class="classroom-grid">
+
+{% for c in other_classrooms %}
+<div class="class-card">
+
+<div class="card-header">
+<div class="class-icon"><i class="bi bi-plus-lg"></i></div>
+
+<div>
+<div class="class-title">{{ c.name }}</div>
+<div class="teacher">
+<i class="bi bi-person"></i>
+{{ c.teacher.get_full_name }}
+</div>
+</div>
+</div>
+
+<div class="card-meta">
+Deadline: {{ c.deadline|date:"M d, Y H:i" }}
+</div>
+
+<span class="badge badge-yellow">Not Joined</span>
+
+<div class="card-actions">
+<button class="btn-primary" onclick="openJoinModal('{{ c.id }}')">Join</button>
+</div>
+
+</div>
+{% endfor %}
+
+</div>
+</div>
+
+</div>
+
+<!-- MODALS (unchanged) -->
+<div class="modal" id="joinModal">
+<div class="modal-box">
+<h4>Enter Classroom Passkey</h4>
+<form method="POST" action="{% url 'student:join_classroom' %}">
+{% csrf_token %}
+<input type="hidden" name="classroom_id" id="classroomIdInput">
+<input name="passkey" required>
+<button class="btn-primary">Join</button>
+<button type="button" onclick="closeJoinModal()">Cancel</button>
+</form>
+</div>
+</div>
+
+<div class="modal" id="unjoinModal">
+<div class="modal-box">
+<h4>Leave Classroom?</h4>
+<form method="POST" action="{% url 'student:unjoin_classroom' %}">
+{% csrf_token %}
+<input type="hidden" id="unjoinClassroomId" name="classroom_id">
+<button class="btn-primary">Confirm</button>
+<button type="button" onclick="closeUnjoinModal()">Cancel</button>
+</form>
+</div>
+</div>
+
+<script>
+function switchTab(id,btn){
+document.querySelectorAll(".tab").forEach(t=>t.classList.remove("active"));
+document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+btn.classList.add("active");
+document.getElementById(id).classList.add("active");
+}
+
+function openJoinModal(id){
+document.getElementById("classroomIdInput").value=id;
+document.getElementById("joinModal").style.display="flex";
+}
+function closeJoinModal(){
+document.getElementById("joinModal").style.display="none";
+}
+function openUnjoinModal(id){
+document.getElementById("unjoinClassroomId").value=id;
+document.getElementById("unjoinModal").style.display="flex";
+}
+function closeUnjoinModal(){
+document.getElementById("unjoinModal").style.display="none";
+}
+</script>
+
+</body>
+</html>

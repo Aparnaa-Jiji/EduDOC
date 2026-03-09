@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Classroom - EduDOC</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+    <style>
+        *{box-sizing:border-box;font-family:'Poppins',sans-serif;}
+        body{margin:0;background:linear-gradient(135deg,#dff3ff,#bfe9ff,#c9f5ff);padding:40px;}
+
+        .glass{
+            background:rgba(255,255,255,0.45);
+            backdrop-filter:blur(18px);
+            border-radius:18px;
+            box-shadow:0 10px 30px rgba(0,0,0,0.06);
+            padding:30px;
+            max-width:520px;
+            margin:auto;
+        }
+
+        input{
+            width:100%;
+            padding:10px;
+            margin-bottom:12px;
+            border-radius:10px;
+            border:none;
+        }
+
+        .btn{
+            padding:10px 14px;
+            border-radius:10px;
+            background:#2980ff;
+            color:white;
+            border:none;
+            cursor:pointer;
+        }
+
+        .back{
+            display:inline-block;
+            margin-top:12px;
+            font-size:13px;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="glass">
+
+    <h2>Edit Classroom</h2>
+
+    <form method="POST">
+        {% csrf_token %}
+
+        <label>Name</label>
+        {{ form.name }}
+
+        <label>Deadline</label>
+        {{ form.deadline }}
+
+        <label>Max Marks</label>
+        {{ form.max_marks }}
+
+        <button class="btn">Update</button>
+    </form>
+
+    <a class="back" href="{% url 'classroom-detail' classroom.id %}">← Back</a>
+
+</div>
+
+</body>
+</html>

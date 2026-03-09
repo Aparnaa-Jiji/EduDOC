@@ -1,0 +1,232 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Batch | EduDOC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:
+        radial-gradient(circle at 15% 20%, #6366f1 0%, transparent 40%),
+        radial-gradient(circle at 85% 80%, #a78bfa 0%, transparent 40%),
+        linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* ================= TOP NAV ================= */
+
+.topbar{
+    width:100%;
+    padding:20px 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(20px);
+    box-shadow:0 8px 25px rgba(0,0,0,0.05);
+}
+
+.brand{ font-weight:700; font-size:20px; }
+
+.nav-links{
+    display:flex;
+    gap:30px;
+    align-items:center;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#444;
+    font-weight:500;
+}
+
+.nav-links a.active{
+    padding:6px 16px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+}
+
+.profile-menu{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logout-link{
+    text-decoration:none;
+    color:#dc2626;
+    font-weight:500;
+}
+
+/* ================= MAIN ================= */
+
+.container{
+    padding:60px;
+    display:flex;
+    justify-content:center;
+}
+
+.page-header{
+    text-align:center;
+    margin-bottom:35px;
+}
+
+.page-title{
+    font-size:32px;
+    font-weight:700;
+}
+
+.page-subtitle{
+    margin-top:8px;
+    opacity:.65;
+}
+
+/* ================= CARD ================= */
+
+.card{
+    width:520px;
+    padding:35px;
+    border-radius:28px;
+    background:rgba(255,255,255,0.85);
+    backdrop-filter:blur(25px);
+    box-shadow:0 30px 70px rgba(0,0,0,0.08);
+}
+
+/* ================= FORM ================= */
+
+.form-group{
+    margin-bottom:22px;
+    display:flex;
+    flex-direction:column;
+}
+
+.form-group label{
+    font-size:13px;
+    font-weight:600;
+    margin-bottom:8px;
+    opacity:.7;
+}
+
+input, select{
+    padding:12px 14px;
+    border-radius:14px;
+    border:1px solid rgba(0,0,0,0.08);
+    font-size:14px;
+    outline:none;
+    transition:.3s ease;
+}
+
+input:focus, select:focus{
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,0.15);
+}
+
+/* ================= BUTTONS ================= */
+
+.button-row{
+    margin-top:25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    border:none;
+    padding:10px 20px;
+    border-radius:20px;
+    color:white;
+    font-weight:500;
+    cursor:pointer;
+    transition:.3s ease;
+}
+
+.btn-primary:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 35px rgba(79,70,229,0.3);
+}
+
+.cancel-link{
+    text-decoration:none;
+    font-weight:500;
+    color:#6b7280;
+}
+
+.cancel-link:hover{
+    color:#111;
+}
+</style>
+</head>
+
+<body>
+
+<!-- TOP NAV -->
+
+<div class="topbar">
+    <div class="brand">EduDOC Admin</div>
+
+    <div class="nav-links">
+        <a href="{% url 'accounts:admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'accounts:teacher_list' %}">Teachers</a>
+        <a href="{% url 'accounts:admin_batch_list' %}" class="active">Batches</a>
+    </div>
+
+    <div class="profile-menu">
+        <span>{{ request.user.first_name }}</span>
+        <a href="{% url 'accounts:logout' %}" class="logout-link">Logout</a>
+    </div>
+</div>
+
+<!-- MAIN -->
+
+<div class="container">
+
+    <div>
+        <div class="page-header">
+            <div class="page-title">Edit Batch</div>
+            <div class="page-subtitle">
+                Modify batch configuration details
+            </div>
+        </div>
+
+        <div class="card">
+
+            <form method="post">
+                {% csrf_token %}
+
+                <div class="form-group">
+                    <label>Batch Name</label>
+                    {{ form.name }}
+                </div>
+
+                <div class="form-group">
+                    <label>Academic Year</label>
+                    {{ form.academic_year }}
+                </div>
+
+                <div class="button-row">
+                    <a href="{% url 'accounts:admin_batch_list' %}" class="cancel-link">
+                        Cancel
+                    </a>
+
+                    <button type="submit" class="btn-primary">
+                        Update Batch
+                    </button>
+                </div>
+
+            </form>
+
+        </div>
+    </div>
+
+</div>
+
+</body>
+</html>

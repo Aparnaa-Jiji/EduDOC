@@ -1,0 +1,334 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Admin Dashboard | EduDOC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:radial-gradient(circle at 15% 20%, #6366f1 0%, transparent 40%),
+               radial-gradient(circle at 85% 80%, #a78bfa 0%, transparent 40%),
+               linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* ================= TOP NAV ================= */
+
+.topbar{
+    width:100%;
+    padding:20px 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(20px);
+    box-shadow:0 8px 25px rgba(0,0,0,0.05);
+}
+
+.brand{
+    font-weight:700;
+    font-size:20px;
+}
+
+.nav-links{
+    display:flex;
+    gap:30px;
+    align-items:center;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#444;
+    font-weight:500;
+}
+
+.nav-links a.active{
+    padding:6px 16px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+}
+
+.profile-menu{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logout-link{
+    text-decoration:none;
+    color:#dc2626;
+    font-weight:500;
+}
+
+/* ================= CONTENT ================= */
+
+.container{ padding:60px; }
+
+.page-title{
+    font-size:38px;
+    font-weight:700;
+    margin-bottom:10px;
+}
+
+.page-subtitle{
+    opacity:.65;
+    margin-bottom:40px;
+}
+
+/* ================= KPI ================= */
+
+.kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(3, 1fr);
+    gap:25px;
+    margin-bottom:40px;
+}
+
+.kpi-card{
+    padding:26px;
+    border-radius:22px;
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(20px);
+    box-shadow:0 25px 60px rgba(0,0,0,0.08);
+    display:flex;
+    gap:18px;
+    align-items:center;
+}
+
+.kpi-icon{
+    width:52px;
+    height:52px;
+    border-radius:16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:20px;
+    color:white;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+}
+
+.kpi-secondary{
+    background:linear-gradient(135deg,#7c3aed,#5b21b6);
+}
+
+.kpi-info{
+    background:linear-gradient(135deg,#0ea5e9,#0284c7);
+}
+
+.kpi-card h3{
+    font-size:26px;
+    margin-top:4px;
+}
+@media(max-width:1000px){
+    .kpi-grid{
+        grid-template-columns:1fr;
+    }
+}
+
+/* ================= WORKSPACE ================= */
+
+.workspace{
+    display:grid;
+    grid-template-columns:2fr 1fr;
+    gap:30px;
+}
+
+@media(max-width:1000px){
+    .workspace{ grid-template-columns:1fr; }
+}
+
+.panel{
+    padding:30px;
+    border-radius:24px;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(25px);
+    box-shadow:0 30px 70px rgba(0,0,0,0.08);
+}
+
+.panel h4{ margin-bottom:20px; }
+
+/* ================= TABLE ================= */
+
+table{ width:100%; border-collapse:collapse; }
+
+th{
+    text-align:left;
+    font-size:13px;
+    opacity:.6;
+    padding-bottom:12px;
+}
+
+td{
+    padding:16px 0;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+}
+
+.status-badge{
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    background:#fee2e2;
+    color:#dc2626;
+    font-weight:500;
+}
+
+.action-btn{
+    padding:6px 14px;
+    border:none;
+    border-radius:20px;
+    font-weight:500;
+    cursor:pointer;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    transition:.3s ease;
+}
+
+.action-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 35px rgba(79,70,229,0.4);
+}
+
+/* ================= INSIGHTS ================= */
+
+.insight-item{
+    padding:16px;
+    border-radius:16px;
+    background:rgba(255,255,255,0.6);
+    margin-bottom:14px;
+    font-size:14px;
+}
+
+.insight-item strong{
+    font-size:20px;
+    margin-right:6px;
+}
+</style>
+</head>
+<body>
+
+<!-- ================= TOP NAV ================= -->
+
+<div class="topbar">
+    <div class="brand">EduDOC Admin</div>
+
+    <div class="nav-links">
+        <a href="#" class="active">Dashboard</a>
+        <a href="{% url 'accounts:teacher_list' %}">Teachers</a>
+
+        <a href="{% url 'accounts:admin_batch_list' %}">Batches</a>
+    </div>
+
+    <div class="profile-menu">
+        <span>{{ request.user.first_name }}</span>
+        <a href="{% url 'accounts:logout' %}" class="logout-link">Logout</a>
+    </div>
+</div>
+
+<!-- ================= MAIN ================= -->
+
+<div class="container">
+
+    <div class="page-title">Admin Control Center</div>
+    <div class="page-subtitle">Institutional oversight and governance</div>
+
+    <!-- KPI ROW -->
+    <div class="kpi-grid">
+
+        <div class="kpi-card">
+            <div class="kpi-icon">🎓</div>
+            <div>
+                <small>Teachers</small>
+                <h3>{{ total_teachers }}</h3>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon kpi-info">👨‍🎓</div>
+            <div>
+                <small>Students</small>
+                <h3>{{ total_students }}</h3>
+            </div>
+        </div>
+
+        <div class="kpi-card">
+            <div class="kpi-icon kpi-secondary">📚</div>
+            <div>
+                <small>Batches</small>
+                <h3>{{ total_batches }}</h3>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- WORKSPACE -->
+    <div class="workspace">
+
+        <!-- Approval Queue -->
+        <div class="panel">
+            <h4>Teacher Approval Queue</h4>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Teacher</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                {% for t in pending_teacher_list %}
+                    <tr>
+                        <td>
+                            <strong>{{ t.first_name }} {{ t.last_name }}</strong><br>
+                            <small>{{ t.email }}</small>
+                        </td>
+
+                        <td>
+                            <span class="status-badge">Pending</span>
+                        </td>
+
+                        <td>
+                            <form method="post" action="{% url 'accounts:approve_teacher' t.id %}">
+                                {% csrf_token %}
+                                <button class="action-btn">Approve</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% empty %}
+                    <tr>
+                        <td colspan="3">No pending approvals 🎉</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Insights -->
+        <div class="panel">
+            <h4>Administrative Insights</h4>
+
+            <div class="insight-item">
+                <strong>{{ pending_teachers }}</strong>
+                Teachers awaiting approval
+            </div>
+
+            <div class="insight-item">
+                <strong>{{ unassigned_batches_count }}</strong>
+                Batches with no assigned teacher
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+</body>
+</html>

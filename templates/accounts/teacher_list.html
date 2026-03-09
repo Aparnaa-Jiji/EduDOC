@@ -1,0 +1,844 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Teacher Management | EduDOC</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+/* ================= PROFILE MODAL ENHANCED ================= */
+
+.profile-card{
+    width:100%;
+    max-width:720px;
+    padding:40px;
+    border-radius:32px;
+    background:linear-gradient(
+        145deg,
+        rgba(255,255,255,0.96),
+        rgba(255,255,255,0.88)
+    );
+    backdrop-filter:blur(35px);
+    box-shadow:
+        0 50px 120px rgba(0,0,0,0.18),
+        inset 0 1px 0 rgba(255,255,255,0.6);
+    animation:profilePop .25s ease;
+}
+
+@keyframes profilePop{
+    from{
+        opacity:0;
+        transform:scale(.97) translateY(10px);
+    }
+    to{
+        opacity:1;
+        transform:scale(1) translateY(0);
+    }
+}
+
+@keyframes fadeIn{
+    from{opacity:0; transform:translateY(10px);}
+    to{opacity:1; transform:translateY(0);}
+}
+
+.profile-header{
+    display:flex;
+    gap:25px;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.avatar-wrapper{
+    position:relative;
+}
+
+.profile-image{
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    object-fit:cover;
+    border:4px solid rgba(99,102,241,0.25);
+}
+
+.initials-avatar{
+    width:95px;
+    height:95px;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:28px;
+    font-weight:600;
+    color:white;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    box-shadow:0 12px 30px rgba(79,70,229,0.4);
+}
+
+.status-badge{
+    position:absolute;
+    bottom:4px;
+    right:4px;
+    padding:5px 12px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:600;
+}
+
+.profile-identity h2{
+    font-size:22px;
+    margin-bottom:4px;
+}
+
+.username{
+    font-size:13px;
+    opacity:.6;
+    margin-bottom:6px;
+}
+
+.meta-line{
+    font-size:13px;
+    opacity:.75;
+    display:flex;
+    align-items:center;
+    gap:8px;
+}
+
+.meta-line .dot{
+    width:4px;
+    height:4px;
+    background:#999;
+    border-radius:50%;
+}
+
+.completion-section{
+    margin-bottom:30px;
+}
+
+.completion-top{
+    display:flex;
+    justify-content:space-between;
+    font-size:13px;
+    margin-bottom:6px;
+}
+
+.completion-bar{
+    width:100%;
+    height:10px;
+    background:#e5e7eb;
+    border-radius:8px;
+    overflow:hidden;
+}
+
+.completion-bar div{
+    height:100%;
+    border-radius:8px;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    transition:width .4s ease;
+}
+
+.profile-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(240px,1fr));
+    gap:22px 28px;
+    font-size:14px;
+}
+.profile-item{
+    padding:14px 16px;
+    border-radius:16px;
+    background:rgba(99,102,241,0.05);
+    transition:.25s ease;
+}
+
+.profile-item:hover{
+    background:rgba(99,102,241,0.09);
+    transform:translateY(-2px);
+}
+.status-badge{
+    position:absolute;
+    bottom:6px;
+    right:6px;
+    padding:6px 14px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:600;
+    box-shadow:0 4px 15px rgba(0,0,0,0.15);
+}
+.profile-item label{
+    display:block;
+    font-size:12px;
+    opacity:.55;
+    margin-bottom:4px;
+}
+
+.profile-item span{
+    font-weight:500;
+}
+
+.profile-footer{
+    margin-top:35px;
+    text-align:right;
+}
+body{
+    font-family:'Inter',sans-serif;
+    min-height:100vh;
+    background:radial-gradient(circle at 15% 20%, #6366f1 0%, transparent 40%),
+               radial-gradient(circle at 85% 80%, #a78bfa 0%, transparent 40%),
+               linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* ================= TOP NAV ================= */
+
+.topbar{
+    width:100%;
+    padding:20px 60px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:rgba(255,255,255,0.75);
+    backdrop-filter:blur(20px);
+    box-shadow:0 8px 25px rgba(0,0,0,0.05);
+}
+
+.brand{ font-weight:700; font-size:20px; }
+
+.nav-links{
+    display:flex;
+    gap:30px;
+    align-items:center;
+}
+
+.nav-links a{
+    text-decoration:none;
+    color:#444;
+    font-weight:500;
+}
+
+.nav-links a.active{
+    padding:6px 16px;
+    border-radius:20px;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+}
+
+.profile-menu{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.logout-link{
+    text-decoration:none;
+    color:#dc2626;
+    font-weight:500;
+}
+
+/* ================= CONTENT ================= */
+
+.container{ padding:60px; }
+
+.page-title{
+    font-size:34px;
+    font-weight:700;
+    margin-bottom:8px;
+}
+
+.page-subtitle{
+    opacity:.65;
+    margin-bottom:35px;
+}
+
+/* ================= PANEL ================= */
+
+.panel{
+    padding:30px;
+    border-radius:24px;
+    background:rgba(255,255,255,0.8);
+    backdrop-filter:blur(25px);
+    box-shadow:0 30px 70px rgba(0,0,0,0.08);
+}
+
+/* ================= TABLE ================= */
+
+table{ width:100%; border-collapse:collapse; }
+
+th{
+    text-align:left;
+    font-size:13px;
+    opacity:.6;
+    padding-bottom:14px;
+}
+
+td{
+    padding:18px 0;
+    border-bottom:1px solid rgba(0,0,0,0.06);
+    font-size:14px;
+}
+
+.status-active{
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    background:#dcfce7;
+    color:#15803d;
+    font-weight:500;
+}
+
+.status-inactive{
+    padding:6px 12px;
+    border-radius:20px;
+    font-size:12px;
+    background:#fee2e2;
+    color:#dc2626;
+    font-weight:500;
+}
+
+.action-btn{
+    padding:6px 14px;
+    border:none;
+    border-radius:20px;
+    font-weight:500;
+    cursor:pointer;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    transition:.3s ease;
+    margin-right:8px;
+}
+
+.secondary-btn{
+    background:linear-gradient(135deg,#7c3aed,#5b21b6);
+}
+
+.action-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 35px rgba(79,70,229,0.3);
+}
+
+.empty-row{
+    padding:30px 0;
+    text-align:center;
+    opacity:.6;
+}
+
+.filter-tab{
+    padding:8px 18px;
+    border-radius:20px;
+    background:rgba(255,255,255,0.7);
+    text-decoration:none;
+    font-weight:500;
+    color:#444;
+    transition:.3s ease;
+}
+
+.filter-tab:hover{
+    background:rgba(255,255,255,0.95);
+}
+
+.active-filter{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white !important;
+}
+
+/* ================= MODAL ================= */
+
+.modal-overlay{
+    position:fixed;
+    inset:0;
+    background:rgba(15,23,42,0.55);
+    backdrop-filter:blur(8px);
+    display:none;
+    justify-content:center;
+    align-items:center;
+    z-index:1000;
+    padding:20px;
+    overflow-y:auto;
+    animation:fadeOverlay .2s ease;
+}
+
+@keyframes fadeOverlay{
+    from{opacity:0;}
+    to{opacity:1;}
+}
+
+.modal-content{
+    width:500px;
+    max-height:80vh;
+    overflow-y:auto;
+    padding:30px;
+    border-radius:24px;
+    background:rgba(255,255,255,0.95);
+    box-shadow:0 30px 60px rgba(0,0,0,0.2);
+}
+
+.batch-item{
+    display:block;
+    padding:8px 0;
+    font-size:14px;
+}
+
+.cancel-btn{
+    padding:6px 14px;
+    border-radius:20px;
+    border:none;
+    margin-right:10px;
+    background:#e5e7eb;
+    cursor:pointer;
+}
+/* ================= MODERN GLASS SCROLLBAR ================= */
+
+/* Chrome, Edge, Safari */
+::-webkit-scrollbar{
+    width:10px;
+    height:10px;
+}
+
+::-webkit-scrollbar-track{
+    background:transparent;
+}
+
+::-webkit-scrollbar-thumb{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    border-radius:20px;
+    border:2px solid transparent;
+    background-clip:content-box;
+}
+
+::-webkit-scrollbar-thumb:hover{
+    background:linear-gradient(135deg,#4f46e5,#4338ca);
+}
+.profile-card::-webkit-scrollbar,
+.modal-content::-webkit-scrollbar{
+    width:8px;
+}
+
+.profile-card::-webkit-scrollbar-thumb,
+.modal-content::-webkit-scrollbar-thumb{
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    border-radius:20px;
+}
+
+.profile-card::-webkit-scrollbar-track,
+.modal-content::-webkit-scrollbar-track{
+    background:transparent;
+}
+/* Firefox */
+*{
+    scrollbar-width:thin;
+    scrollbar-color:#6366f1 transparent;
+}
+</style>
+</head>
+
+<body>
+
+<div class="topbar">
+    <div class="brand">EduDOC Admin</div>
+
+    <div class="nav-links">
+        <a href="{% url 'accounts:admin_dashboard' %}">Dashboard</a>
+        <a href="{% url 'accounts:teacher_list' %}" class="active">Teachers</a>
+        <a href="{% url 'accounts:admin_batch_list' %}">Batches</a>
+    </div>
+
+    <div class="profile-menu">
+        <span>{{ request.user.first_name }}</span>
+        <a href="{% url 'accounts:logout' %}" class="logout-link">Logout</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <div class="page-title">Teacher Management</div>
+    <div class="page-subtitle">
+        Activate accounts and manage teacher–batch assignments
+    </div>
+
+    <!-- FILTER TABS -->
+    <div style="margin-bottom:25px; display:flex; gap:14px; flex-wrap:wrap;">
+        <a href="?filter=all"
+           class="filter-tab {% if filter_type == 'all' %}active-filter{% endif %}">
+            All ({{ total_teachers }})
+        </a>
+
+        <a href="?filter=active"
+           class="filter-tab {% if filter_type == 'active' %}active-filter{% endif %}">
+            Active ({{ active_count }})
+        </a>
+
+        <a href="?filter=inactive"
+           class="filter-tab {% if filter_type == 'inactive' %}active-filter{% endif %}">
+            Inactive ({{ inactive_count }})
+        </a>
+
+        <a href="?filter=unassigned"
+           class="filter-tab {% if filter_type == 'unassigned' %}active-filter{% endif %}">
+            Unassigned ({{ unassigned_count }})
+        </a>
+    </div>
+
+    <div class="panel">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+
+            <tbody>
+            {% for teacher in teachers %}
+                <tr>
+                    <td>
+    <strong>{{ teacher.first_name }} {{ teacher.last_name }}</strong><br>
+    <small>@{{ teacher.username }}</small>
+
+    {% if teacher.batch_count > 0 %}
+        <div style="margin-top:6px; font-size:12px; opacity:.7;">
+            Batches:
+            {% for tb in teacher.assigned_batches.all %}
+                <span style="display:inline-block;
+                             background:rgba(99,102,241,0.1);
+                             color:#4f46e5;
+                             padding:3px 10px;
+                             border-radius:14px;
+                             margin:3px 4px 0 0;
+                             font-weight:500;">
+                    {{ tb.batch.name }}
+                </span>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div style="margin-top:6px; font-size:12px; color:#dc2626; font-weight:500;">
+            No batches assigned
+        </div>
+    {% endif %}
+</td>
+
+
+                    <td>{{ teacher.email }}</td>
+
+                    <td>
+                        {% if teacher.is_active %}
+                            <span class="status-active">Active</span>
+                        {% else %}
+                            <span class="status-inactive">Inactive</span>
+                        {% endif %}
+                    </td>
+
+                    <td>
+                    <button type="button"
+        class="action-btn"
+        onclick="openProfileModal({{ teacher.id }})"
+        style="background:linear-gradient(135deg,#0ea5e9,#2563eb);">
+    View Profile
+</button>
+                        <!-- Toggle -->
+                        <form method="post"
+                              action="{% url 'accounts:toggle_user_status' teacher.id %}"
+                              style="display:inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="action-btn">
+                                {% if teacher.is_active %}Deactivate{% else %}Activate{% endif %}
+                            </button>
+                        </form>
+
+                        <!-- Batch Modal -->
+                        {% if teacher.is_active %}
+                            <button type="button"
+                                    class="action-btn secondary-btn"
+                                    onclick="openBatchModal({{ teacher.id }})">
+                                {% if teacher.batch_count > 0 %}
+                                    View / Update Batches ({{ teacher.batch_count }})
+                                {% else %}
+                                    Assign Batches
+                                {% endif %}
+                            </button>
+                        {% else %}
+                            <button class="action-btn secondary-btn"
+                                    style="opacity:.5; cursor:not-allowed;"
+                                    disabled>
+                                Inactive Teacher
+                            </button>
+                        {% endif %}
+
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="4" class="empty-row">
+                        No teachers registered in the system.
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</div>
+
+<!-- MODAL -->
+<!-- TEACHER PROFILE MODAL -->
+<!-- PROFESSIONAL PROFILE MODAL -->
+
+<!-- ===========================
+     EXECUTIVE TEACHER PROFILE
+============================ -->
+<div id="profileModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content profile-card">
+
+        <!-- HEADER -->
+        <div class="profile-header">
+
+            <div class="avatar-wrapper">
+
+                <img id="p_image"
+                     class="profile-image"
+                     src=""
+                     style="display:none;">
+
+                <div id="p_initials_avatar" class="initials-avatar"></div>
+
+                <div id="p_status_badge" class="status-badge"></div>
+            </div>
+
+            <div class="profile-identity">
+                <h2 id="p_fullname"></h2>
+                <div class="username" id="p_username"></div>
+                <div class="meta-line">
+                    <span id="p_designation"></span>
+                    <span class="dot"></span>
+                    <span id="p_department"></span>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- COMPLETION SECTION -->
+        <div class="completion-section">
+            <div class="completion-top">
+                <span>Profile Strength</span>
+                <strong id="p_completion"></strong>
+            </div>
+
+            <div class="completion-bar">
+                <div id="p_completion_bar"></div>
+            </div>
+        </div>
+
+        <!-- DETAILS GRID -->
+        <div class="profile-grid">
+
+            <div class="profile-item">
+                <label>Email</label>
+                <span id="p_email"></span>
+            </div>
+
+            <div class="profile-item">
+                <label>Phone</label>
+                <span id="p_phone"></span>
+            </div>
+
+            <div class="profile-item">
+                <label>Qualification</label>
+                <span id="p_qualification"></span>
+            </div>
+
+            <div class="profile-item">
+                <label>Specialization</label>
+                <span id="p_specialization"></span>
+            </div>
+
+            <div class="profile-item">
+                <label>Institution</label>
+                <span id="p_institution"></span>
+            </div>
+
+            <div class="profile-item">
+                <label>Experience</label>
+                <span id="p_experience"></span>
+            </div>
+
+            <div class="profile-item">
+                <label>Date Joined</label>
+                <span id="p_joined"></span>
+            </div>
+
+        </div>
+
+        <div class="profile-footer">
+            <button type="button"
+                    onclick="closeProfileModal()"
+                    class="cancel-btn">
+                Close
+            </button>
+        </div>
+
+    </div>
+</div>
+<div id="batchModal" class="modal-overlay" style="display:none;">
+    <div class="modal-content">
+
+        <h3 id="modalTeacherTitle">Manage Batches</h3>
+
+        <form method="post" id="batchForm">
+            {% csrf_token %}
+
+            <div class="batch-list">
+                {% for batch in batches %}
+                    <label class="batch-item">
+                        <input type="checkbox"
+                               name="batches"
+                               value="{{ batch.id }}"
+                               class="batch-checkbox">
+                        {{ batch.name }}
+                    </label>
+                {% endfor %}
+            </div>
+
+            <div style="margin-top:25px; text-align:right;">
+                <button type="button"
+                        onclick="closeBatchModal()"
+                        class="cancel-btn">
+                    Cancel
+                </button>
+
+                <button type="submit" class="action-btn">
+                    Save Changes
+                </button>
+            </div>
+        </form>
+
+    </div>
+</div>
+
+<script>
+const teacherBatchMap = JSON.parse('{{ teacher_batch_json|escapejs }}');
+
+function openBatchModal(teacherId){
+    const modal = document.getElementById("batchModal");
+    const form = document.getElementById("batchForm");
+
+    form.action = "{% url 'accounts:save_teacher_batches' 0 %}".replace('0', teacherId);
+
+
+
+    document.querySelectorAll(".batch-checkbox").forEach(cb => {
+        cb.checked = false;
+    });
+
+    if (teacherBatchMap[teacherId]) {
+        teacherBatchMap[teacherId].forEach(function(batchId){
+            const checkbox = document.querySelector(
+                `.batch-checkbox[value="${batchId}"]`
+            );
+            if (checkbox){
+                checkbox.checked = true;
+            }
+        });
+    }
+
+    modal.style.display = "flex";
+document.body.style.overflow = "hidden";
+}
+
+function closeBatchModal(){
+    document.getElementById("batchModal").style.display = "none";
+}
+</script>
+
+
+<script>
+const teacherProfileMap = JSON.parse('{{ teacher_profile_json|escapejs }}');
+
+function openProfileModal(teacherId){
+
+    const modal = document.getElementById("profileModal");
+    const data = teacherProfileMap[teacherId];
+    if(!data) return;
+
+    document.getElementById("p_fullname").innerText = data.full_name;
+    document.getElementById("p_username").innerText = "@" + data.username;
+    document.getElementById("p_email").innerText = data.email;
+    document.getElementById("p_department").innerText = data.department;
+    document.getElementById("p_designation").innerText = data.designation;
+    document.getElementById("p_qualification").innerText = data.highest_qualification;
+    document.getElementById("p_specialization").innerText = data.specialization;
+    document.getElementById("p_institution").innerText = data.qualification_institution;
+    document.getElementById("p_experience").innerText = data.experience_years;
+    document.getElementById("p_phone").innerText = data.phone;
+    document.getElementById("p_joined").innerText = data.date_joined;
+
+    // Status badge
+    const badge = document.getElementById("p_status_badge");
+
+if(data.is_active){
+    badge.innerText = "Active";
+    badge.style.background = "#dcfce7";
+    badge.style.color = "#15803d";
+}else{
+    badge.innerText = "Inactive";
+    badge.style.background = "#fee2e2";
+    badge.style.color = "#dc2626";
+}
+    // Profile Image
+    // Profile Image / Initials Fallback
+const img = document.getElementById("p_image");
+const initialsAvatar = document.getElementById("p_initials_avatar");
+
+// Generate initials (First + Last)
+const names = data.full_name.trim().split(" ");
+let initials = "";
+
+if(names.length >= 2){
+    initials = names[0][0] + names[names.length - 1][0];
+} else {
+    initials = names[0][0];
+}
+
+initials = initials.toUpperCase();
+
+if(data.profile_image){
+    img.src = data.profile_image;
+    img.style.display = "block";
+    initialsAvatar.style.display = "none";
+} else {
+    img.style.display = "none";
+    initialsAvatar.innerText = initials;
+    initialsAvatar.style.display = "flex";
+}
+
+    // Completion %
+    document.getElementById("p_completion").innerText =
+        data.profile_completion + "%";
+
+    document.getElementById("p_completion_bar").style.width =
+        data.profile_completion + "%";
+
+    modal.style.display = "flex";
+document.body.style.overflow = "hidden";
+}
+
+function closeProfileModal(){
+    document.getElementById("profileModal").style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+window.addEventListener("click", function(e){
+    const profileModal = document.getElementById("profileModal");
+    const batchModal = document.getElementById("batchModal");
+
+    if(e.target === profileModal){
+        closeProfileModal();
+    }
+
+    if(e.target === batchModal){
+        closeBatchModal();
+    }
+});
+</script>
+</body>
+</html>

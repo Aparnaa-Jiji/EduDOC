@@ -1,0 +1,370 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Teacher Registration | EduDOC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+.errorlist{
+    color:#dc2626;
+    font-size:13px;
+    margin-bottom:12px;
+}
+body{
+    font-family:'Inter',sans-serif;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    overflow:hidden;
+    background:radial-gradient(circle at 20% 30%, #6366f1 0%, transparent 40%),
+               radial-gradient(circle at 80% 70%, #a78bfa 0%, transparent 40%),
+               linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* Decorative shapes */
+.shape{
+    position:absolute;
+    width:300px;
+    height:300px;
+    border-radius:50%;
+    filter:blur(90px);
+    opacity:0.3;
+    background:#6366f1;
+    top:-80px;
+    left:-80px;
+}
+
+/* Card */
+.card{
+    width:460px;
+    padding:50px;
+    border-radius:28px;
+    backdrop-filter:blur(25px);
+    background:rgba(255,255,255,0.85);
+    box-shadow:0 40px 80px rgba(0,0,0,0.15);
+    animation:fadeIn 0.6s ease;
+}
+
+h2{
+    text-align:center;
+    margin-bottom:10px;
+    font-weight:600;
+}
+
+.subtitle{
+    text-align:center;
+    font-size:13px;
+    color:#64748b;
+    margin-bottom:30px;
+}
+
+/* Floating label group */
+.field{
+    position:relative;
+    margin-bottom:20px;
+}
+
+.field input{
+    width:100%;
+    padding:14px 14px;
+    border-radius:14px;
+    border:1px solid #e2e8f0;
+    font-size:14px;
+    transition:all 0.3s ease;
+    background:white;
+}
+
+.field input:focus{
+    outline:none;
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,0.2);
+}
+
+.field label{
+    position:absolute;
+    left:14px;
+    top:14px;
+    font-size:13px;
+    color:#94a3b8;
+    transition:all 0.2s ease;
+    pointer-events:none;
+}
+
+.field input:focus + label,
+.field input:not(:placeholder-shown) + label{
+    top:-8px;
+    left:12px;
+    background:white;
+    padding:0 6px;
+    font-size:11px;
+    color:#6366f1;
+}
+
+/* Error */
+.errorlist{
+    color:#dc2626;
+    font-size:12px;
+    margin-top:6px;
+    animation:fadeError 0.3s ease;
+}
+
+@keyframes fadeError{
+    from{ opacity:0; transform:translateY(-4px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+/* Button */
+button{
+    width:100%;
+    padding:14px;
+    border:none;
+    border-radius:16px;
+    background:linear-gradient(135deg,#6366f1,#4f46e5);
+    color:white;
+    font-weight:600;
+    cursor:pointer;
+    transition:all 0.3s ease;
+}
+
+button:hover{
+    transform:translateY(-3px);
+    box-shadow:0 20px 40px rgba(79,70,229,0.4);
+}
+
+/* Footer */
+.footer{
+    text-align:center;
+    margin-top:18px;
+    font-size:13px;
+}
+
+.footer a{
+    color:#6366f1;
+    text-decoration:none;
+    font-weight:500;
+}
+
+@keyframes fadeIn{
+    from{ opacity:0; transform:translateY(20px); }
+    to{ opacity:1; transform:translateY(0); }
+}
+
+.password-field{
+    position:relative;
+    display:flex;
+    align-items:center;
+}
+.password-field input{
+    width:100%;
+    padding-right:45px;
+}
+.toggle-password{
+    position:absolute;
+    right:14px;
+    top:50%;
+    transform:translateY(-50%);
+    cursor:pointer;
+    font-size:16px;
+    opacity:.6;
+}
+
+.toggle-password:hover{
+    opacity:1;
+}
+
+.password-rules{
+    font-size:12px;
+    margin-top:6px;
+    color:#64748b;
+    display:none;
+    opacity:0;
+    transition:opacity 0.25s ease;
+}
+
+.password-rules.show{
+    display:block;
+    opacity:1;
+}
+
+.password-valid{
+    color:#16a34a;
+}
+
+.password-invalid{
+    color:#dc2626;
+}
+</style>
+</head>
+
+<body>
+
+<div class="shape"></div>
+
+<div class="card">
+    <h2>Teacher Registration</h2>
+    <div class="subtitle">
+        Accounts require administrative approval before activation.
+    </div>
+
+    <form method="post">
+        {% if form.non_field_errors %}
+<div class="errorlist">
+    {{ form.non_field_errors }}
+</div>
+{% endif %}
+    {% csrf_token %}
+
+    <!-- Full Name -->
+    <div class="field">
+        {{ form.full_name }}
+        {% if form.full_name.errors %}
+            <div class="errorlist">{{ form.full_name.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Email -->
+    <div class="field">
+        {{ form.email }}
+        {% if form.email.errors %}
+            <div class="errorlist">{{ form.email.errors }}</div>
+        {% endif %}
+    </div>
+
+    <!-- Password -->
+    <!-- Password -->
+<div class="field">
+
+    <div class="password-field">
+        {{ form.password1 }}
+
+        <span class="toggle-password"
+              onclick="togglePassword('id_password1', this)">
+            👁
+        </span>
+    </div>
+
+    <div id="password-rules" class="password-rules"></div>
+
+    {% if form.password1.errors %}
+        <div class="errorlist">{{ form.password1.errors }}</div>
+    {% endif %}
+
+</div>
+
+    <!-- Confirm Password -->
+    <div class="field">
+
+    <div class="password-field">
+        {{ form.password2 }}
+
+        <span class="toggle-password"
+              onclick="togglePassword('id_password2', this)">
+            👁
+        </span>
+    </div>
+
+    <div id="match-status" class="password-rules"></div>
+
+    {% if form.password2.errors %}
+        <div class="errorlist">{{ form.password2.errors }}</div>
+    {% endif %}
+
+</div>
+
+    <button type="submit">Create Account</button>
+</form>
+
+    <div class="footer">
+        Already registered?
+        <a href="{% url 'accounts:login' %}">Back to Login</a>
+    </div>
+</div>
+<script>
+
+
+// =============================
+// SHOW / HIDE PASSWORD
+// =============================
+function togglePassword(fieldId, icon){
+    const input = document.getElementById(fieldId);
+
+    if(input.type === "password"){
+        input.type = "text";
+        icon.textContent = "🙈";
+    }else{
+        input.type = "password";
+        icon.textContent = "👁";
+    }
+}
+
+// =============================
+// REAL-TIME VALIDATION
+// =============================
+
+const password1 = document.getElementById("id_password1");
+const password2 = document.getElementById("id_password2");
+const ruleBox = document.getElementById("password-rules");
+const matchBox = document.getElementById("match-status");
+
+// Show rules on focus
+password1.addEventListener("focus", () => {
+    ruleBox.classList.add("show");
+});
+
+// Hide rules if empty on blur
+password1.addEventListener("blur", () => {
+    if(password1.value === ""){
+        ruleBox.classList.remove("show");
+    }
+});
+
+password1.addEventListener("input", () => {
+
+    ruleBox.classList.add("show");
+
+    const value = password1.value;
+    let messages = [];
+
+    if(value.length >= 8)
+        messages.push("✔ Minimum length satisfied");
+    else
+        messages.push("✖ Minimum 8 characters");
+
+    if(!/^\d+$/.test(value))
+        messages.push("✔ Not numeric only");
+    else
+        messages.push("✖ Cannot be numeric only");
+
+    ruleBox.innerHTML = messages.join("<br>");
+});
+
+// Password match validation
+password2.addEventListener("input", () => {
+
+    if(password2.value === ""){
+        matchBox.innerHTML = "";
+        return;
+    }
+
+    if(password1.value === password2.value){
+        matchBox.innerHTML =
+            "<span style='color:#16a34a'>✔ Passwords match</span>";
+    }else{
+        matchBox.innerHTML =
+            "<span style='color:#dc2626'>✖ Passwords do not match</span>";
+    }
+});
+
+</script>
+</body>
+</html>

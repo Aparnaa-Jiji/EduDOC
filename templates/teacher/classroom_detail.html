@@ -1,0 +1,716 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>{{ classroom.name }} | EduDOC</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Inter',sans-serif;
+min-height:100vh;
+padding:60px;
+background:
+radial-gradient(circle at 20% 20%, #4f46e5 0%, transparent 45%),
+radial-gradient(circle at 80% 80%, #7c3aed 0%, transparent 45%),
+linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* HEADER */
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:45px;
+}
+
+.title-group{
+display:flex;
+align-items:center;
+gap:18px;
+}
+
+.back-btn{
+padding:10px 18px;
+border-radius:30px;
+background:rgba(255,255,255,.85);
+backdrop-filter:blur(20px);
+text-decoration:none;
+font-size:13px;
+font-weight:600;
+color:#4f46e5;
+box-shadow:0 15px 40px rgba(0,0,0,.05);
+}
+
+.page-title{font-size:30px;font-weight:700;}
+
+/* BUTTONS */
+.btn{
+padding:10px 18px;
+border-radius:28px;
+border:none;
+cursor:pointer;
+font-size:13px;
+font-weight:600;
+text-decoration:none;
+color:white;
+background:linear-gradient(135deg,#4f46e5,#7c3aed);
+box-shadow:0 20px 45px rgba(79,70,229,.35);
+}
+
+.btn-light{
+background:#e5e7eb;
+color:#111;
+box-shadow:none;
+}
+
+.btn-danger{
+background:linear-gradient(135deg,#dc2626,#b91c1c);
+}
+
+/* CARDS */
+.card{
+padding:30px;
+border-radius:30px;
+background:rgba(255,255,255,.9);
+backdrop-filter:blur(30px);
+box-shadow:0 50px 100px rgba(0,0,0,.06);
+}
+
+/* STATS */
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+gap:25px;
+margin-bottom:50px;
+}
+
+.stat-card{
+padding:26px;
+border-radius:26px;
+background:white;
+box-shadow:0 30px 70px rgba(0,0,0,.05);
+}
+
+.stat-title{font-size:13px;opacity:.6;}
+.stat-number{font-size:26px;font-weight:700;margin-top:8px;}
+
+/* LAYOUT */
+.layout{
+display:grid;
+grid-template-columns:3fr 1.2fr;
+gap:35px;
+}
+
+@media(max-width:1100px){
+.layout{grid-template-columns:1fr;}
+}
+
+/* TABLE */
+table{width:100%;border-collapse:collapse;}
+th{text-align:left;font-size:12px;opacity:.5;padding-bottom:14px;}
+td{padding:16px 0;border-bottom:1px solid rgba(0,0,0,.05);font-size:13px;}
+
+.small{font-size:12px;opacity:.6}
+.empty{text-align:center;padding:40px;opacity:.6}
+
+/* TABS */
+.tab-header{display:flex;gap:12px;margin-bottom:24px;}
+
+.tab-btn{
+padding:10px 20px;
+border:none;
+border-radius:30px;
+font-size:13px;
+cursor:pointer;
+background:rgba(0,0,0,.05);
+font-weight:600;
+}
+
+.tab-btn.active{
+background:linear-gradient(135deg,#4f46e5,#7c3aed);
+color:white;
+box-shadow:0 12px 30px rgba(79,70,229,.35);
+}
+
+.tab-content{display:none;}
+.tab-content.active{display:block;}
+
+.side-card{margin-bottom:30px;}
+.side-card h3{margin-bottom:16px;font-size:16px;}
+/* ================= DELETE MODAL ================= */
+
+.modal-overlay{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+background:rgba(15,23,42,.45);
+backdrop-filter:blur(8px);
+display:none;
+justify-content:center;
+align-items:center;
+z-index:9999;
+}
+
+.modal-card{
+background:rgba(255,255,255,.65);
+backdrop-filter:blur(25px);
+border-radius:24px;
+padding:35px;
+width:420px;
+text-align:center;
+box-shadow:0 30px 80px rgba(0,0,0,.2);
+animation:scaleIn .25s ease;
+}
+
+.modal-card h3{
+margin-bottom:10px;
+font-size:22px;
+}
+
+.modal-card p{
+opacity:.8;
+margin-bottom:25px;
+}
+
+.modal-actions{
+display:flex;
+justify-content:center;
+gap:15px;
+}
+
+.confirm-delete{
+background:linear-gradient(135deg,#ef4444,#dc2626);
+color:white;
+border:none;
+padding:12px 22px;
+border-radius:14px;
+cursor:pointer;
+font-weight:600;
+}
+
+.cancel-btn{
+background:#e2e8f0;
+border:none;
+padding:12px 22px;
+border-radius:14px;
+cursor:pointer;
+font-weight:600;
+}
+
+@keyframes scaleIn{
+from{transform:scale(.8);opacity:0;}
+to{transform:scale(1);opacity:1;}
+}
+
+/* ================= RULE BUTTON SYSTEM ================= */
+
+.rule-actions{
+    margin-top:20px;
+    display:flex;
+    gap:18px;
+    align-items:center;
+}
+
+.btn{
+    padding:12px 28px;
+    border-radius:40px;
+    text-decoration:none;
+    font-weight:600;
+    font-size:15px;
+    transition:.25s ease;
+    display:inline-block;
+}
+
+/* Primary Gradient Button */
+.btn-primary{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    box-shadow:0 20px 40px rgba(79,70,229,0.35);
+}
+
+.btn-primary:hover{
+    transform:translateY(-3px);
+    box-shadow:0 30px 60px rgba(79,70,229,0.45);
+}
+
+/* Glass Outline Button */
+.btn-outline{
+    background:rgba(255,255,255,0.65);
+    backdrop-filter:blur(20px);
+    color:#4f46e5;
+    border:1px solid rgba(79,70,229,0.3);
+}
+
+.btn-outline:hover{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:white;
+    transform:translateY(-3px);
+}
+/* ================= DELETE BUTTON ================= */
+
+.delete-btn{
+padding:10px 20px;
+border-radius:14px;
+border:none;
+cursor:pointer;
+
+color:white;
+font-weight:600;
+font-size:14px;
+
+background:linear-gradient(135deg,#ef4444,#dc2626);
+
+box-shadow:
+0 8px 20px rgba(239,68,68,.35),
+inset 0 1px 0 rgba(255,255,255,.25);
+
+transition:all .25s ease;
+}
+
+.delete-btn:hover{
+transform:translateY(-2px) scale(1.03);
+box-shadow:
+0 14px 28px rgba(239,68,68,.45);
+}
+
+.delete-btn:active{
+transform:scale(.96);
+}
+
+
+
+</style>
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+<div class="title-group">
+<a href="{% url 'teacher:classrooms_page' %}" class="back-btn">← Classrooms</a>
+<div class="page-title">{{ classroom.name }}</div>
+</div>
+
+<div style="display:flex;justify-content:flex-end;margin-bottom:15px;">
+    <button type="button" class="delete-btn" onclick="openDeleteModal()">
+        🗑 Delete Classroom
+    </button>
+</div>
+</div>
+
+<!-- STATS -->
+<div class="stats">
+
+<div class="stat-card">
+<div class="stat-title">Joined Students</div>
+<div class="stat-number">{{ joined_count }}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">Submitted Students</div>
+<div class="stat-number">{{ submitted_count }}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">Unjoined Students</div>
+<div class="stat-number">{{ unjoined_count }}</div>
+</div>
+
+<div class="stat-card">
+<div class="stat-title">Deadline</div>
+<div class="small" style="margin-top:8px;">{{ classroom.deadline }}</div>
+</div>
+
+</div>
+
+<div class="layout">
+
+<!-- LEFT PANEL -->
+<div class="card">
+
+<div class="tab-header">
+    
+<button class="tab-btn active" data-tab="joined">
+Joined ({{ joined_count }})
+</button>
+
+<button class="tab-btn" data-tab="submitted">
+Submitted ({{ submitted_count }})
+</button>
+
+<button class="tab-btn" data-tab="unjoined">
+Unjoined ({{ unjoined_count }})
+</button>
+<button class="tab-btn" data-tab="evaluation">
+Evaluation Overview
+</button>
+</div>
+
+<!-- JOINED -->
+<div class="tab-content active" id="joined">
+<table>
+<tr><th>Student</th><th>Email</th></tr>
+{% for student in joined_students %}
+<tr>
+<td>{{ student.user.get_full_name|default:student.user.username }}</td>
+<td>{{ student.user.email }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="2" class="empty">No joined students</td></tr>
+{% endfor %}
+</table>
+</div>
+
+<!-- SUBMITTED -->
+<div class="tab-content" id="submitted">
+{% if submissions %}
+<table>
+<tr>
+<th>Student</th>
+<th>Attempt</th>
+<th>Score</th>
+<th>Uploaded</th>
+<th>Document</th>
+</tr>
+{% for s in submissions %}
+<tr>
+<td>{{ s.student.user.get_full_name|default:s.student.user.username }}</td>
+<td>{{ s.attempt_no }}</td>
+<td>{{ s.final_score|default:"—" }}</td>
+<td>{{ s.submitted_at }}</td>
+<td><a href="{{ s.file.url }}">View</a></td>
+</tr>
+{% endfor %}
+</table>
+{% else %}
+<div class="empty">No submissions yet</div>
+{% endif %}
+</div>
+
+<!-- UNJOINED -->
+<div class="tab-content" id="unjoined">
+<table>
+<tr><th>Student</th><th>Email</th></tr>
+{% for student in unjoined_students %}
+<tr>
+<td>{{ student.user.get_full_name|default:student.user.username }}</td>
+<td>{{ student.user.email }}</td>
+</tr>
+{% empty %}
+<tr><td colspan="2" class="empty">All students have joined</td></tr>
+{% endfor %}
+</table>
+</div>
+<!-- EVALUATION OVERVIEW -->
+<div class="tab-content" id="evaluation">
+
+{% if student_reports %}
+
+<table>
+<tr>
+<th>Student</th>
+<th>Attempts</th>
+<th>Compliance</th>
+<th>Plagiarism</th>
+<th>Final Score</th>
+<th>Status</th>
+<th>Report</th>
+</tr>
+
+{% for r in student_reports %}
+<tr>
+
+<td>
+{{ r.student.user.get_full_name|default:r.student.user.username }}
+</td>
+
+<td>{{ r.attempts }}</td>
+
+<td>
+{% if r.compliance %}
+<span style="
+padding:6px 12px;
+border-radius:20px;
+font-weight:600;
+color:white;
+background:
+{% if r.compliance >= 75 %}
+linear-gradient(135deg,#16a34a,#15803d)
+{% elif r.compliance >= 50 %}
+linear-gradient(135deg,#f59e0b,#d97706)
+{% else %}
+linear-gradient(135deg,#dc2626,#b91c1c)
+{% endif %}
+;">
+{{ r.compliance }}%
+</span>
+{% else %}
+—
+{% endif %}
+</td>
+
+<td>
+{% if r.plagiarism %}
+<span style=" padding:6px 12px;
+border-radius:20px;
+font-weight:600;
+color:white;
+background:
+{% if r.plagiarism <= 15 %}
+linear-gradient(135deg,#16a34a,#15803d)
+{% elif r.plagiarism <= 30 %}
+linear-gradient(135deg,#f59e0b,#d97706)
+{% else %}
+linear-gradient(135deg,#dc2626,#b91c1c)
+{% endif %}
+;">
+{{ r.plagiarism }}%
+</span>
+{% else %}
+—
+{% endif %}
+</td>
+
+<td>
+{% if r.final_score is not None %}
+    <span style="
+        padding:6px 14px;
+        border-radius:20px;
+        font-weight:700;
+        background:linear-gradient(135deg,#4f46e5,#7c3aed);
+        color:white;
+        display:inline-block;
+    ">
+        {{ r.final_score|floatformat:2 }} / {{ classroom.max_marks }}
+    </span>
+{% else %}
+    —
+{% endif %}
+</td>
+
+<td>{{ r.status }}</td>
+
+<td>
+{% if r.submission_id %}
+<a href="{% url 'teacher:submission_report' r.submission_id %}"
+class="btn btn-light">
+View
+</a>
+{% else %}
+—
+{% endif %}
+</td>
+
+</tr>
+{% endfor %}
+</table>
+
+{% else %}
+<div class="empty">No evaluation data available</div>
+{% endif %}
+
+</div>
+</div>
+
+<!-- RIGHT PANEL -->
+<div>
+
+<!-- CLASS INFO -->
+<div class="card side-card">
+<h3>Class Info</h3>
+<p class="small">
+<strong>Passkey:</strong> {{ classroom.passkey }}<br>
+<strong>Max Marks:</strong> {{ classroom.max_marks }}<br>
+<strong>Created:</strong> {{ classroom.created_at }}
+</p>
+</div>
+
+<!-- GUIDELINES -->
+<div class="card side-card">
+<h3>Guidelines & Rules</h3>
+
+<a href="{% url 'teacher:add_guidelines' classroom.id %}" class="btn">
+{% if classroom.rules_json %}
+Edit Rules
+{% else %}
+Add Rules
+{% endif %}
+</a>
+
+{% if classroom.rules_json %}
+<a href="{% url 'teacher:download_guidelines_pdf' classroom.id %}"
+       class="btn btn-outline">
+        Download Guidelines PDF
+    </a>
+{% endif %}
+
+<p class="small" style="margin-top:18px;">
+<strong>Version:</strong>
+{% if classroom.rules_version %}v{{ classroom.rules_version }}{% else %}—{% endif %}
+<br>
+<strong>Status:</strong>
+{% if classroom.rules_locked %}🔒 Locked{% else %}Editable{% endif %}
+</p>
+</div>
+
+<!-- UNLOCK REQUESTS -->
+<!-- ================= UNLOCK REQUESTS ================= -->
+<form id="csrfForm" style="display:none;">
+    {% csrf_token %}
+</form>
+<div class="card side-card">
+<h3>Unlock Requests ({{ unlock_requests|length }})</h3>
+
+{% if unlock_requests %}
+<table>
+<tr>
+<th>Student</th>
+<th>Reason</th>
+<th>Action</th>
+</tr>
+
+{% for req in unlock_requests %}
+<tr>
+
+<td>
+{{ req.student.user.get_full_name|default:req.student.user.username }}
+</td>
+
+<td>
+<button class="btn btn-light"
+onclick="showReason('{{ req.reason|escapejs }}')">
+View Reason
+</button>
+</td>
+
+<td style="display:flex;gap:8px;">
+
+<button class="btn btn-light"
+onclick="approveUnlock({{ req.id }}, this)">
+Approve
+</button>
+
+<button class="btn btn-danger"
+onclick="rejectUnlock({{ req.id }}, this)">
+Reject
+</button>
+
+</td>
+
+</tr>
+{% endfor %}
+</table>
+
+{% else %}
+<div class="small">No pending unlock requests</div>
+{% endif %}
+</div>
+<!-- ================= DELETE MODAL ================= -->
+<!-- DELETE MODAL -->
+<div id="deleteModal" class="modal-overlay">
+<div class="modal-card">
+<h3>Delete Classroom</h3>
+<p>This classroom will be permanently deleted.</p>
+
+<form method="POST" action="{% url 'teacher:delete_classroom' classroom.id %}">
+{% csrf_token %}
+<button type="submit" class="btn btn-danger">Delete Permanently</button>
+<button type="button" class="btn btn-light" onclick="closeDeleteModal()">Cancel</button>
+</form>
+
+</div>
+</div>
+
+<!-- REASON MODAL -->
+<div id="reasonModal" class="modal-overlay">
+<div class="modal-card">
+<h3>Unlock Request Reason</h3>
+<p id="reasonText"></p>
+<button class="btn btn-light" onclick="closeReason()">Close</button>
+</div>
+</div>
+<script>
+
+/* ---------------- CSRF ---------------- */
+function csrfToken(){
+    return document.querySelector('#csrfForm input').value;
+}
+
+/* ---------------- APPROVE ---------------- */
+function approveUnlock(id,btn){
+
+fetch(`/teacher/unlock/${id}/approve/`,{
+    method:"POST",
+    headers:{
+        "X-CSRFToken":csrfToken(),
+        "Content-Type":"application/json"
+    }
+})
+.then(r=>r.json())
+.then(data=>{
+    if(data.success){
+        btn.closest("tr").remove();
+    }
+});
+}
+
+/* ---------------- REJECT ---------------- */
+function rejectUnlock(id,btn){
+
+fetch(`/teacher/unlock/${id}/reject/`,{
+    method:"POST",
+    headers:{
+        "X-CSRFToken":csrfToken(),
+        "Content-Type":"application/json"
+    }
+})
+.then(r=>r.json())
+.then(data=>{
+    if(data.success){
+        btn.closest("tr").remove();
+    }
+});
+}
+
+</script>
+<script>
+document.querySelectorAll(".tab-btn").forEach(btn=>{
+btn.addEventListener("click",function(){
+document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
+document.querySelectorAll(".tab-content").forEach(c=>c.classList.remove("active"));
+this.classList.add("active");
+document.getElementById(this.dataset.tab).classList.add("active");
+});
+});
+
+</script>
+<script>
+
+function openDeleteModal(){
+document.getElementById("deleteModal").style.display="flex";
+}
+
+function closeDeleteModal(){
+document.getElementById("deleteModal").style.display="none";
+}
+
+</script>
+<script>
+function showReason(reason){
+    document.getElementById("reasonText").innerText = reason;
+    document.getElementById("reasonModal").style.display = "flex";
+}
+
+function closeReason(){
+    document.getElementById("reasonModal").style.display = "none";
+}
+</script>
+</body>
+</html>

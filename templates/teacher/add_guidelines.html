@@ -1,0 +1,442 @@
+{% load static %}
+<!DOCTYPE html>
+<html>
+<head>
+<title>Configure Guidelines | EduDOC</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+/* ================= BASE ================= */
+
+*{margin:0;padding:0;box-sizing:border-box;}
+
+body{
+font-family:'Inter',sans-serif;
+min-height:100vh;
+padding:40px;
+background:
+radial-gradient(circle at 20% 20%, #4f46e5 0%, transparent 45%),
+radial-gradient(circle at 80% 80%, #7c3aed 0%, transparent 45%),
+linear-gradient(135deg,#eef2ff,#f8fafc);
+}
+
+/* ================= HEADER ================= */
+
+.header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:30px;
+}
+
+.page-title{
+font-size:26px;
+font-weight:700;
+}
+
+.back-btn{
+padding:10px 18px;
+border-radius:30px;
+background:rgba(255,255,255,.85);
+backdrop-filter:blur(20px);
+text-decoration:none;
+font-weight:600;
+color:#4f46e5;
+box-shadow:0 10px 30px rgba(0,0,0,.05);
+}
+
+/* ================= WORKSPACE ================= */
+
+.workspace{
+display:grid;
+grid-template-columns:260px 1fr;
+gap:25px;
+max-width:1450px;
+margin:auto;
+}
+
+/* ================= SIDEBAR ================= */
+
+.sidebar{
+background:rgba(255,255,255,.6);
+backdrop-filter:blur(22px);
+border-radius:22px;
+padding:25px;
+box-shadow:0 20px 45px rgba(0,0,0,.08);
+height:fit-content;
+}
+
+.module{
+padding:12px 16px;
+border-radius:14px;
+cursor:pointer;
+margin-bottom:10px;
+font-weight:500;
+transition:.25s;
+}
+
+.module:hover{
+background:rgba(79,70,229,.1);
+}
+
+.module.active{
+background:linear-gradient(135deg,#6dd5fa,#2980ff);
+color:white;
+}
+
+/* ================= CONTENT ================= */
+
+.content{
+background:rgba(255,255,255,.65);
+backdrop-filter:blur(22px);
+border-radius:26px;
+padding:45px;
+box-shadow:0 25px 60px rgba(0,0,0,.08);
+min-height:650px;
+}
+
+.panel{display:none;}
+.panel.active{display:block;}
+
+.panel h3{
+margin-bottom:25px;
+font-size:20px;
+font-weight:600;
+}
+
+/* ================= FORM ================= */
+
+.grid-2{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+
+.form-group{
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+label{font-size:14px;font-weight:500;}
+
+input,select,textarea{
+padding:12px;
+border-radius:12px;
+border:none;
+background:white;
+box-shadow:inset 0 2px 6px rgba(0,0,0,.05);
+}
+
+textarea{min-height:140px;}
+
+input:focus,select:focus,textarea:focus{
+outline:none;
+box-shadow:0 0 0 3px rgba(41,128,255,.25);
+}
+
+/* ================= TOGGLE ================= */
+
+.toggle{
+display:flex;
+align-items:center;
+gap:10px;
+margin-top:15px;
+}
+
+/* ================= SAVE ================= */
+
+.save-bar{
+position:fixed;
+bottom:30px;
+right:40px;
+}
+
+.save-btn{
+padding:14px 28px;
+border-radius:16px;
+border:none;
+cursor:pointer;
+background:linear-gradient(135deg,#6dd5fa,#2980ff);
+color:white;
+font-weight:600;
+font-size:15px;
+box-shadow:0 10px 25px rgba(41,128,255,.4);
+}
+
+.save-btn:hover{
+transform:translateY(-2px);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="header">
+
+<a href="{% url 'teacher:classroom_detail' classroom.id %}" class="back-btn">
+← Back to Classroom
+</a>
+
+<div class="page-title">
+Guideline Configuration — {{ classroom.name }}
+</div>
+
+</div>
+
+
+<form method="POST">
+{% csrf_token %}
+
+<div class="workspace">
+
+<!-- ================= SIDEBAR ================= -->
+
+<div class="sidebar">
+
+<div class="module active" data-target="page">📄 Page Layout</div>
+<div class="module" data-target="font">🔤 Fonts</div>
+<div class="module" data-target="spacing">📏 Line Spacing</div>
+<div class="module" data-target="structure">🗂 Structure</div>
+<div class="module" data-target="header">🧾 Header</div>
+<div class="module" data-target="footer">📄 Footer</div>
+<div class="module" data-target="numbering">🔢 Page Number</div>
+<div class="module" data-target="typography">🔠 Typography</div>
+<div class="module" data-target="doc_numbering">📑 Numbering</div>
+<div class="module" data-target="quality">✅ Quality Checks</div>
+
+</div>
+
+
+<!-- ================= CONTENT ================= -->
+
+<div class="content">
+
+<!-- PAGE -->
+<div id="page" class="panel active">
+<h3>Page Layout Rules</h3>
+
+<div class="grid-3">
+<div class="form-group">{{ form.min_pages.label_tag }}{{ form.min_pages }}</div>
+<div class="form-group">{{ form.max_pages.label_tag }}{{ form.max_pages }}</div>
+<div class="form-group">{{ form.paper_size.label_tag }}{{ form.paper_size }}</div>
+</div>
+
+<h4 style="margin-top:25px;">Margins</h4>
+
+<div class="form-group" style="max-width:220px;">
+{{ form.margin_unit.label_tag }}
+{{ form.margin_unit }}
+</div>
+
+<div class="grid-4">
+<div class="form-group">{{ form.margin_top.label_tag }}{{ form.margin_top }}</div>
+<div class="form-group">{{ form.margin_bottom.label_tag }}{{ form.margin_bottom }}</div>
+<div class="form-group">{{ form.margin_left.label_tag }}{{ form.margin_left }}</div>
+<div class="form-group">{{ form.margin_right.label_tag }}{{ form.margin_right }}</div>
+</div>
+</div>
+
+<!-- FONT -->
+<div id="font" class="panel">
+<h3>Font Rules</h3>
+
+<div class="grid-2">
+<div class="form-group">{{ form.font_name.label_tag }}{{ form.font_name }}</div>
+<div class="form-group">{{ form.font_color.label_tag }}{{ form.font_color }}</div>
+</div>
+
+<div class="toggle">
+{{ form.enforce_uniform_font }}
+<label>Enforce Uniform Font</label>
+</div>
+</div>
+
+<!-- SPACING -->
+<div id="spacing" class="panel">
+<h3>Line Spacing Rules</h3>
+
+<div class="grid-4">
+<div class="form-group">{{ form.main_line_spacing.label_tag }}{{ form.main_line_spacing }}</div>
+<div class="form-group">{{ form.reference_spacing.label_tag }}{{ form.reference_spacing }}</div>
+<div class="form-group">{{ form.certificate_spacing.label_tag }}{{ form.certificate_spacing }}</div>
+<div class="form-group">{{ form.acknowledgement_spacing.label_tag }}{{ form.acknowledgement_spacing }}</div>
+</div>
+</div>
+
+<!-- STRUCTURE -->
+<div id="structure" class="panel">
+<h3>Document Structure</h3>
+
+<div class="form-group">
+{{ form.required_sections.label_tag }}
+{{ form.required_sections }}
+</div>
+
+<div class="form-group">
+{{ form.required_chapters.label_tag }}
+{{ form.required_chapters }}
+</div>
+</div>
+
+<!-- HEADER -->
+<div id="header" class="panel">
+<h3>Header Rules</h3>
+
+<div class="toggle">
+{{ form.header_required }}
+<label>Require Header</label>
+</div>
+
+<div id="header_config" style="margin-top:15px;display:none;">
+<div class="grid-2">
+<div class="form-group">{{ form.header_position.label_tag }}{{ form.header_position }}</div>
+<div class="form-group">{{ form.header_text.label_tag }}{{ form.header_text }}</div>
+</div>
+</div>
+</div>
+
+<!-- FOOTER -->
+<div id="footer" class="panel">
+<h3>Footer Rules</h3>
+
+<div class="toggle">
+{{ form.footer_required }}
+<label>Require Footer</label>
+</div>
+
+<div id="footer_config" style="margin-top:15px;display:none;">
+<div class="grid-2">
+<div class="form-group">{{ form.footer_position.label_tag }}{{ form.footer_position }}</div>
+<div class="form-group">{{ form.footer_text.label_tag }}{{ form.footer_text }}</div>
+</div>
+</div>
+</div>
+
+<!-- PAGE NUMBER -->
+<div id="numbering" class="panel">
+<h3>Page Number Rules</h3>
+
+<div class="toggle">
+{{ form.page_number_required }}
+<label>Enable Page Number</label>
+</div>
+
+<div id="number_config" style="margin-top:15px;display:none;">
+<div class="grid-3">
+<div class="form-group">{{ form.page_number_position.label_tag }}{{ form.page_number_position }}</div>
+<div class="form-group">{{ form.page_number_style.label_tag }}{{ form.page_number_style }}</div>
+</div>
+</div>
+</div>
+
+<!-- TYPOGRAPHY -->
+<div id="typography" class="panel">
+<h3>Font Size Rules</h3>
+
+<div class="grid-3">
+<div class="form-group">{{ form.content_font_size.label_tag }}{{ form.content_font_size }}</div>
+<div class="form-group">{{ form.heading_font_size.label_tag }}{{ form.heading_font_size }}</div>
+<div class="form-group">{{ form.subheading_font_size.label_tag }}{{ form.subheading_font_size }}</div>
+</div>
+</div>
+
+<!-- DOCUMENT NUMBERING -->
+<div id="doc_numbering" class="panel">
+<h3>Chapter & Subheading Numbering</h3>
+
+<div class="toggle">
+{{ form.chapter_numbering_enabled }}
+<label>Enable Chapter Numbering</label>
+</div>
+
+<div id="chapter_config" style="margin-top:15px;display:none;">
+<div class="form-group" style="max-width:220px;">
+{{ form.chapter_start_number.label_tag }}
+{{ form.chapter_start_number }}
+</div>
+</div>
+
+<hr style="margin:25px 0;">
+
+<div class="toggle">
+{{ form.subheading_numbering_enabled }}
+<label>Enable Subheading Numbering</label>
+</div>
+</div>
+
+<!-- QUALITY -->
+<div id="quality" class="panel">
+<h3>Quality & Compliance Checks</h3>
+
+<div class="toggle">
+{{ form.grammar_check_enabled }}
+<label>Enable Grammar Validation</label>
+</div>
+
+<div class="toggle" style="margin-top:15px;">
+{{ form.border_required }}
+<label>Require Page Border</label>
+</div>
+</div>
+
+</div>
+
+<div class="save-bar">
+<button type="submit" class="save-btn">
+Save Guidelines
+</button>
+</div>
+
+</form>
+
+<script>
+
+/* ================= MODULE NAVIGATION ================= */
+
+const modules=document.querySelectorAll(".module");
+const panels=document.querySelectorAll(".panel");
+
+modules.forEach(m=>{
+m.addEventListener("click",()=>{
+modules.forEach(x=>x.classList.remove("active"));
+panels.forEach(p=>p.classList.remove("active"));
+
+m.classList.add("active");
+document.getElementById(m.dataset.target)
+.classList.add("active");
+});
+});
+
+
+/* ================= RULE TOGGLE ================= */
+
+function toggleRule(checkboxId, configId){
+
+const checkbox=document.getElementById(checkboxId);
+const config=document.getElementById(configId);
+
+if(!checkbox) return;
+
+function update(){
+config.style.display = checkbox.checked ? "block":"none";
+}
+
+checkbox.addEventListener("change",update);
+update();
+}
+
+toggleRule("id_header_required","header_config");
+toggleRule("id_footer_required","footer_config");
+toggleRule("id_page_number_required","number_config");
+toggleRule("id_chapter_numbering_enabled","chapter_config");
+
+
+
+</script>
+
+</body>
+</html>
