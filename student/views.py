@@ -1014,3 +1014,28 @@ def download_report_pdf(request, submission_id):
     doc.build(elements)
 
     return response
+
+from django.http import FileResponse, HttpResponse
+from django.shortcuts import get_object_or_404
+from teacher.models import Submission
+from django.conf import settings
+import os
+
+
+def download_annotated(request, submission_id):
+
+    submission = get_object_or_404(Submission, id=submission_id)
+
+    if not submission.annotated_file:
+        return HttpResponse("Annotated file not available", status=404)
+
+    file_path = os.path.join(settings.MEDIA_ROOT, submission.annotated_file.name)
+
+    if not os.path.exists(file_path):
+        return HttpResponse("File not found on server", status=404)
+
+    return FileResponse(
+        open(file_path, "rb"),
+        as_attachment=True,
+        filename=os.path.basename(file_path)
+    )

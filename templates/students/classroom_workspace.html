@@ -622,9 +622,9 @@ Active
         </a>
 
         {% if s.annotated_file %}
-        <a href="{{ s.annotated_file.url }}" class="action-link">
-            Annotated
-        </a>
+        <a href="{% url 'student:download_annotated' s.id %}" class="action-link">
+    Annotated
+</a>
         {% endif %}
 
         {% if s.status == "EVALUATED" %}

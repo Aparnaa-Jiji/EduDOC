@@ -1511,3 +1511,4 @@ def submission_report(request, submission_id):
             "breakdown": submission.breakdown_json or {},
         }
     )
+

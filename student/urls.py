@@ -117,6 +117,10 @@ path(
     name="download_rules",
 ),
 
-
+path(
+    "download-annotated/<int:submission_id>/",
+    views.download_annotated,
+    name="download_annotated"
+)
 ]
 
