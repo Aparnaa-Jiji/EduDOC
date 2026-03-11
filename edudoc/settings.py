@@ -25,8 +25,12 @@ SECRET_KEY = 'django-insecure-5jj01o%urf&b!jwv#ezwc61sc0d7f0ykfaf%vgx9c68y_=c$gm
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = ['*']
-CSRF_TRUSTED_ORIGINS = ["edudoc-production.up.railway.app"]
+ALLOWED_HOSTS = ["*"]
+CSRF_TRUSTED_ORIGINS = [
+    "https://edudoc-production.up.railway.app",
+    "http://127.0.0.1:8000",
+    "http://localhost:8000"
+]
 
 # Application definition
 
