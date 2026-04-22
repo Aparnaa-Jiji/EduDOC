@@ -203,6 +203,52 @@ button:hover{
 .password-invalid{
     color:#dc2626;
 }
+.success-message{
+    background:rgba(16,185,129,0.15);
+    color:#065f46;
+    padding:12px 16px;
+    border-radius:12px;
+    font-size:13px;
+    margin-bottom:18px;
+    border:1px solid rgba(16,185,129,0.25);
+    backdrop-filter:blur(10px);
+    animation:fadeIn 0.4s ease;
+}
+/* Toast container */
+#toast-container{
+    position:fixed;
+    top:20px;
+    right:20px;
+    z-index:9999;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+}
+
+/* Toast card */
+.toast{
+    min-width:280px;
+    max-width:360px;
+    padding:14px 16px;
+    border-radius:16px;
+    color:#065f46;
+    background:rgba(16,185,129,0.18);
+    border:1px solid rgba(16,185,129,0.35);
+    backdrop-filter:blur(18px);
+    box-shadow:0 20px 40px rgba(0,0,0,0.15);
+    font-size:13px;
+    animation:slideIn 0.4s ease, fadeOut 0.5s ease 4s forwards;
+}
+
+/* Animations */
+@keyframes slideIn{
+    from{ transform:translateX(40px); opacity:0; }
+    to{ transform:translateX(0); opacity:1; }
+}
+
+@keyframes fadeOut{
+    to{ opacity:0; transform:translateX(40px); }
+}
 </style>
 </head>
 
@@ -212,9 +258,15 @@ button:hover{
 
 <div class="card">
     <h2>Teacher Registration</h2>
-    <div class="subtitle">
-        Accounts require administrative approval before activation.
-    </div>
+    {% if messages %}
+<div id="toast-container">
+    {% for message in messages %}
+        <div class="toast success">
+            {{ message }}
+        </div>
+    {% endfor %}
+</div>
+{% endif %}
 
     <form method="post">
         {% if form.non_field_errors %}
@@ -365,6 +417,12 @@ password2.addEventListener("input", () => {
     }
 });
 
+setTimeout(() => {
+    const container = document.getElementById("toast-container");
+    if(container){
+        container.remove();
+    }
+}, 4500);
 </script>
 </body>
 </html>

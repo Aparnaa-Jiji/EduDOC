@@ -141,4 +141,5 @@ path(
     views.force_password_change,
     name="force_password_change"
 ),
+path('reject-teacher/<int:user_id>/', views.reject_teacher, name='reject_teacher'),
 ]

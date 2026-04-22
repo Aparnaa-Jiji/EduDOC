@@ -58,7 +58,7 @@ MIDDLEWARE = [
     'accounts.middleware.ForcePasswordChangeMiddleware', 
     'whitenoise.middleware.WhiteNoiseMiddleware',
 ]
-
+STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
 
 ROOT_URLCONF = 'edudoc.urls'
 
@@ -156,8 +156,8 @@ EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
 
-EMAIL_HOST_USER = 'ecotracksys.mca@gmail.com'
-EMAIL_HOST_PASSWORD = 'pglo ybip dyzm impg'  
+EMAIL_HOST_USER = 'edudoc.mca@gmail.com'
+EMAIL_HOST_PASSWORD = 'ykhd lmlz elcd xisb'  
 DEFAULT_FROM_EMAIL = EMAIL_HOST_USER
 
 

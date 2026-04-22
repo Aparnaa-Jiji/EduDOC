@@ -209,6 +209,21 @@ td{
     font-size:20px;
     margin-right:6px;
 }
+.reject-btn{
+    padding:6px 14px;
+    border:none;
+    border-radius:20px;
+    font-weight:500;
+    cursor:pointer;
+    background:linear-gradient(135deg,#ef4444,#b91c1c);
+    color:white;
+    transition:all 0.25s ease;
+}
+
+.reject-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 30px rgba(220,38,38,0.35);
+}
 </style>
 </head>
 <body>
@@ -296,11 +311,20 @@ td{
                         </td>
 
                         <td>
-                            <form method="post" action="{% url 'accounts:approve_teacher' t.id %}">
-                                {% csrf_token %}
-                                <button class="action-btn">Approve</button>
-                            </form>
-                        </td>
+    <div style="display:flex; gap:10px; align-items:center;">
+        
+        <form method="post" action="{% url 'accounts:approve_teacher' t.id %}">
+            {% csrf_token %}
+            <button class="action-btn">Approve</button>
+        </form>
+
+        <form method="post" action="{% url 'accounts:reject_teacher' t.id %}">
+            {% csrf_token %}
+            <button type="submit" class="reject-btn">Reject</button>
+        </form>
+
+    </div>
+</td>
                     </tr>
                 {% empty %}
                     <tr>

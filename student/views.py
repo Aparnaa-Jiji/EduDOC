@@ -53,22 +53,39 @@ def send_student_credentials(request, email, username, password):
     )
 
     send_mail(
-        "EduDOC Student Account Credentials",
+        "EduDOC Student Account Created 🎓",
         f"""
-Welcome to EduDOC
+Dear Student,
 
-Username: {username}
-Password: {password}
+Your EduDOC account has been successfully created.
 
-Login: {login_url}
+--------------------------------------------------
+🔐 LOGIN DETAILS
+--------------------------------------------------
+Username : {username}
+Password : {password}
 
-Please log in and change your password immediately.
+Login here:
+{login_url}
+
+--------------------------------------------------
+📌 IMPORTANT INSTRUCTIONS
+--------------------------------------------------
+• Please login immediately using your credentials.
+• You will be required to change your password after first login.
+• After login, join your classroom using the provided passkey.
+• Keep your credentials secure.
+
+--------------------------------------------------
+Welcome to EduDOC Learning Platform.
+
+Regards,  
+EduDOC Administration
 """,
         settings.DEFAULT_FROM_EMAIL,
         [email],
         fail_silently=True
     )
-
 
 # =========================================================
 # ROLE DECORATOR
@@ -599,7 +616,35 @@ def parse_uploaded_students(file):
     else:
         raise ValueError("Only CSV or XLSX supported")
 
+import re
 
+import re
+from django.contrib.auth import get_user_model
+
+User = get_user_model()
+
+def generate_username(full_name):
+
+    # 1. Normalize name → lowercase + remove special chars
+    base = re.sub(r'[^a-z0-9]+', '.', full_name.lower()).strip('.')
+
+    # 2. Fallback if name empty
+    if not base:
+        base = "student"
+
+    username = base
+
+    # 3. If not exists → return directly (FAST PATH)
+    if not User.objects.filter(username=username).exists():
+        return username
+
+    # 4. Add numeric suffix until unique
+    counter = 1
+    while True:
+        new_username = f"{base}{counter}"
+        if not User.objects.filter(username=new_username).exists():
+            return new_username
+        counter += 1
 # =========================================================
 # BULK UPLOAD (FIXED)
 # =========================================================
@@ -643,12 +688,12 @@ def student_bulk_upload(request, id):
             skipped_emails.append(email)
             continue
 
-        base_username = email.split("@")[0]
-        username = base_username
+        full_name = name.strip()
+        username = generate_username(full_name)
         counter = 1
 
         while User.objects.filter(username=username).exists():
-            username = f"{base_username}{counter}"
+            username = f"{username}{counter}"
             counter += 1
 
         password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
@@ -675,8 +720,10 @@ def student_bulk_upload(request, id):
 
 
         # 🔥 SEND EMAIL HERE (missing earlier)
-        send_student_credentials(request, email, username, password)
-
+        try:
+            send_student_credentials(request, email, username, password)
+        except Exception as e:
+            print(f"Email failed for {email}: {e}")
 
         created += 1
 
@@ -779,7 +826,8 @@ def student_add(request, id):
             messages.error(request, "Email already exists.")
             return redirect("accounts:admin_batch_detail", id=batch.id)
 
-        username = email.split("@")[0]
+        full_name = form.cleaned_data["full_name"].strip()
+        username = generate_username(full_name)
         password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
 
         full_name = form.cleaned_data["full_name"].strip()
@@ -804,7 +852,10 @@ def student_add(request, id):
         batch=batch
     )
 
-        send_student_credentials(request, email, username, password)
+        try:
+            send_student_credentials(request, email, username, password)
+        except Exception as e:
+            print(f"Email failed for {email}: {e}")
 
 
         messages.success(request, "Student created successfully.")

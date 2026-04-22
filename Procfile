@@ -1,0 +1,1 @@
+web: gunicorn eduDOC_Project.wsgi:application

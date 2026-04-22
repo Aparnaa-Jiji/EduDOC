@@ -72,6 +72,8 @@ def teacher_register(request):
             messages.success(
                 request,
                 "Registration successful. You can login after admin approval."
+                "You will receive your login credentials via email after approval. "
+                "Please check your email regularly."
             )
 
             # 🔥 Reset form (important)
@@ -122,7 +124,7 @@ def login_view(request):
 
         login(request, user)
 
-        if user.first_login:
+        if user.first_login and user.role == User.Role.STUDENT:
             return redirect("accounts:force_password_change")
 
         if user.is_superuser:
@@ -157,9 +159,10 @@ def admin_dashboard(request):
     from .models import TeacherBatch
 
     pending_teachers_qs = User.objects.filter(
-        role=User.Role.TEACHER,
-        is_approved=False
-    )
+    role=User.Role.TEACHER,
+    is_approved=False,
+    is_active=True
+)
 
 
 
@@ -169,7 +172,7 @@ def admin_dashboard(request):
 
     context = {
         
-        "total_teachers": User.objects.filter(role=User.Role.TEACHER).count(),
+        "total_teachers": User.objects.filter(role=User.Role.TEACHER, is_approved=True).count(),
         "total_students": User.objects.filter(role=User.Role.STUDENT).count(),
         "total_batches": total_batches,
         # Approval queue (ONLY pending)
@@ -184,10 +187,14 @@ def admin_dashboard(request):
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import update_session_auth_hash
+from django.contrib.auth import logout
 
 @login_required
-@login_required
 def force_password_change(request):
+
+    # 🔒 Allow ONLY students
+    if request.user.role != User.Role.STUDENT:
+        return redirect("accounts:login")
 
     if request.method == "POST":
 
@@ -195,20 +202,23 @@ def force_password_change(request):
         confirm = request.POST.get("confirm_password")
 
         if password != confirm:
-            return render(request,
-                          "accounts/force_password_change.html",
-                          {"error": "Passwords do not match"})
+            return render(
+                request,
+                "accounts/force_password_change.html",
+                {"error": "Passwords do not match"}
+            )
 
         user = request.user
         user.set_password(password)
         user.first_login = False
         user.save()
 
-        update_session_auth_hash(request, user)
+        # 🔐 Invalidate session after password change
+        logout(request)
 
-        return redirect("student:student_dashboard")
+        return redirect("accounts:login")
 
-    return render(request,"accounts/force_password_change.html")
+    return render(request, "accounts/force_password_change.html")
 
 from django.db.models import Count
 
@@ -237,7 +247,8 @@ def teacher_list(request):
 
     teachers = (
     User.objects
-    .filter(role=User.Role.TEACHER)
+    .filter(role=User.Role.TEACHER, is_approved=True
+    )
     .select_related("profile")   # IMPORTANT
     .annotate(batch_count=Count("assigned_batches"))
     .prefetch_related(
@@ -350,22 +361,29 @@ def teacher_list(request):
         ),
         "filter_type": filter_type,
         "total_teachers": User.objects.filter(
-            role=User.Role.TEACHER
+            role=User.Role.TEACHER,
+            is_approved=True
         ).count(),
         "active_count": User.objects.filter(
             role=User.Role.TEACHER,
+            is_approved=True,
             is_active=True
         ).count(),
+
         "inactive_count": User.objects.filter(
             role=User.Role.TEACHER,
+            is_approved=True,
             is_active=False
         ).count(),
+
         "unassigned_count": User.objects.filter(
-            role=User.Role.TEACHER
+            role=User.Role.TEACHER,
+            is_approved=True
         )
         .annotate(batch_count=Count("assigned_batches"))
         .filter(batch_count=0)
         .count(),
+
     }
 
     return render(request, "accounts/teacher_list.html", context)
@@ -388,44 +406,93 @@ def approve_teacher(request, user_id):
 
     # Send approval email
     send_mail(
-    subject="EduDOC Teacher Account Approved ✅",
-    message=f"""
-Dear {teacher.first_name or teacher.username},
+            subject="EduDOC Teacher Account Approved ✅",
+            message=f"""
+            Dear {teacher.first_name or teacher.username},
 
-Your EduDOC teacher account has been approved by the administrator.
+            Your EduDOC teacher account has been successfully approved by the administrator.
 
---------------------------------------------------
-LOGIN DETAILS
---------------------------------------------------
-Username : {teacher.username}
-Email    : {teacher.email}
+            --------------------------------------------------
+            🔐 LOGIN DETAILS
+            --------------------------------------------------
+            Username : {teacher.username}
+            Email    : {teacher.email}
 
-Login Page:
-http://127.0.0.1:8000/login/
+            Login Page:
+            http://127.0.0.1:8000/login/
 
---------------------------------------------------
-IMPORTANT
---------------------------------------------------
-• Keep your username confidential.
-• Change your password after first login if required.
-• Contact admin if you face login issues.
+            --------------------------------------------------
+            📌 NEXT STEPS
+            --------------------------------------------------
+            1. Login using your username and password.
+            2. After logging in, go to your profile section.
+            3. Complete/update your professional details (department, qualification, experience, etc.).
 
-Welcome to EduDOC Faculty Workspace.
+            --------------------------------------------------
+            ⚠ IMPORTANT
+            --------------------------------------------------
+            • Keep your login credentials secure.
+            • Do not share your username or password.
+            • Contact admin if you face any issues.
 
-Regards,
-EduDOC Administration
-""",
-    from_email=settings.DEFAULT_FROM_EMAIL,
-    recipient_list=[teacher.email],
-    fail_silently=False,
-)
+            --------------------------------------------------
+            Welcome to EduDOC Faculty Workspace.
+
+            Regards,  
+            EduDOC Administration
+            """,
+            from_email=settings.DEFAULT_FROM_EMAIL,
+            recipient_list=[teacher.email],
+            fail_silently=False,
+        )
 
     messages.success(request, "Teacher approved and notified via email.")
 
     return redirect("accounts:admin_dashboard")
 
 
+@login_required
+@require_POST
+def reject_teacher(request, user_id):
 
+    if not request.user.is_superuser:
+        return redirect("accounts:login")
+
+    teacher = get_object_or_404(User, id=user_id)
+
+    # 🔴 Deactivate account
+    teacher.is_active = False
+    teacher.is_approved = False
+    teacher.save()
+
+    # 📧 Send rejection email
+    from django.core.mail import send_mail
+    from django.conf import settings
+
+    send_mail(
+        subject="EduDOC Teacher Account Request Rejected ❌",
+        message=f"""
+Dear {teacher.first_name or teacher.username},
+
+We regret to inform you that your request for a teacher account on EduDOC has been reviewed and was not approved by the administrator.
+
+
+• You may contact the administrator for clarification contact through email: {settings.DEFAULT_FROM_EMAIL}
+• You can re-register with correct details if needed
+
+Thank you for your interest in EduDOC.
+
+Regards,
+EduDOC Administration
+""",
+        from_email=settings.DEFAULT_FROM_EMAIL,
+        recipient_list=[teacher.email],
+        fail_silently=False,
+    )
+
+    messages.error(request, "Teacher request rejected and email sent.")
+
+    return redirect("accounts:admin_dashboard")
 # =====================================================
 # TOGGLE USER STATUS
 # =====================================================
