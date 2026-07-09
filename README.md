@@ -26,3 +26,18 @@ This project was developed as my MCA final-year project.
 ### Version Control
 - Git
 - GitHub
+## Features
+
+- User authentication with role-based access (Admin, Teacher, Student)
+- Classroom creation and management for academic activities
+- Batch and student management
+- Academic guideline management
+- DOCX document upload and validation
+- Automated document compliance evaluation
+- Rule-based formatting analysis
+- Plagiarism checking
+- Annotated document generation with feedback
+- Compliance report generation
+- Submission history and attempt tracking
+- Teacher dashboard for reviewing submissions
+- Student dashboard for monitoring submission status
